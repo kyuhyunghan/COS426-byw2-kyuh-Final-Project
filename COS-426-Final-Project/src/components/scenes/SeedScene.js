@@ -16,13 +16,14 @@ class SeedScene extends Scene {
         };
 
         // Set background to a nice color
-        this.background = new Color(0x7ec0ee);
+        // this.background = new Color(0x7ec0ee);
+        this.background = new Color(0xffffff);
 
         // Add meshes to scene
-        const land = new Land();
-        const flower = new Flower(this);
+        // const land = new Land();
+        // const flower = new Flower(this);
         const lights = new BasicLights();
-        this.add(land, flower, lights);
+        this.add(lights);
 
         // Populate GUI
         this.state.gui.add(this.state, 'rotationSpeed', -5, 5);

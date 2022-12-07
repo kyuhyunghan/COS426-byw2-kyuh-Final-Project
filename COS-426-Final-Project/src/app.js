@@ -38,21 +38,22 @@ controls.update();
 // source: https://jsfiddle.net/prisoner849/hg90shov/
 // global clock, direction, speed
 const clock = new Clock();
-const direction = new Vector3(0, 0, 1);
-const speed = 1; //units a second
+const direction = new Vector3(0, 0, -1);
+const speed = 65; //units a second
 
 // source: https://jsfiddle.net/prisoner849/hg90shov/
-const moveRoad = (speed, direction) => {   
+const moveRoadLine = (speed, direction) => {   
     const delta = clock.getDelta();
-    scene.children[3].position.add(direction.clone().multiplyScalar(speed * delta));
+    for(let i = 4; i < scene.children.length; i++){
+        scene.children[i].position.add(direction.clone().multiplyScalar(speed * delta));
+    }
 }
-
 
 // Render loop
 const onAnimationFrameHandler = (timeStamp) => {
     controls.update();
 
-    moveRoad(speed, direction);
+    moveRoadLine(speed, direction);
 
     renderer.render(scene, camera);
 
@@ -74,12 +75,18 @@ const windowResizeHandler = () => {
 const handleMoveCar = (event) => {
     // left arrow key
     if (event.code === "ArrowLeft") {
-        scene.children[1].position.x += 1.8;
+        scene.children[1].position.x += 2.8;
     }
     // right arrow key
     if (event.code === "ArrowRight") {
-        scene.children[1].position.x -= 1.8;
+        scene.children[1].position.x -= 2.8;
     }
+
+    // space logic
+    if(event.code === "Space") {
+        scene.children[1].position.y += 2;
+    }
+    
 }
 
 windowResizeHandler();

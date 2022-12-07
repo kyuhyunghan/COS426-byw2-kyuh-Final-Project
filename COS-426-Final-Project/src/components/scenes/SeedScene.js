@@ -20,15 +20,38 @@ const buildGround = function() {
 
 const buildRoad = function() {
     let groundMaterial = new MeshStandardMaterial({
-        color: 0x36454F
+        color: 0x0f0f0f
     });
     // road on the ground
-    let groundGeometry = new PlaneGeometry(10, 10);
+    let groundGeometry = new PlaneGeometry(10, 10000);
     let mesh = new Mesh(groundGeometry, groundMaterial);
     mesh.position.y = -0.99;
     mesh.rotation.x = -Math.PI / 2;
     mesh.receiveShadow = true;
     return mesh
+}
+
+const buildRoadLines = function() {
+    const zCoords = [125, 100, 75, 50, 25];
+    const xCoords = [-1.5, 1.5];
+    let meshes = []
+    for(let i = 0; i < xCoords.length; i++){
+        for(let j = 0; j < zCoords.length; j++){
+            let groundMaterial = new MeshStandardMaterial({
+                color: 0xffffff
+            });
+            // road on the ground
+            let groundGeometry = new PlaneGeometry(0.25, 10);
+            let mesh = new Mesh(groundGeometry, groundMaterial);
+            mesh.position.y = -0.98;
+            mesh.position.z = zCoords[j];
+            mesh.position.x = xCoords[i];
+            mesh.rotation.x = -Math.PI / 2;
+            mesh.receiveShadow = true;
+            meshes.push(mesh)
+        }
+    }
+    return meshes
 }
 
 class SeedScene extends Scene {
@@ -54,7 +77,10 @@ class SeedScene extends Scene {
         const car = new Car();
         const ground = buildGround();
         const road = buildRoad();
+        const roadLines = buildRoadLines();
         this.add(lights, car, ground, road);
+        this.add(...roadLines)
+    
         this.fog = new Fog(0x7ec0ee, 125, 150)
         // Populate GUI
         // this.state.gui.add(this.state, 'rotationSpeed', -5, 5);

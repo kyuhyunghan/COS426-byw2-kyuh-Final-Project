@@ -16,7 +16,7 @@ const camera = new PerspectiveCamera();
 const renderer = new WebGLRenderer({ antialias: true });
 
 // Set up camera
-camera.position.set(6, 3, -10);
+camera.position.set(0, 0, -10);
 camera.lookAt(new Vector3(0, 0, 0));
 
 // Set up renderer, canvas, and minor CSS adjustments
@@ -51,5 +51,18 @@ const windowResizeHandler = () => {
     camera.aspect = innerWidth / innerHeight;
     camera.updateProjectionMatrix();
 };
+
+const handleMoveCar = (event) => {
+    // left arrow key
+    if(event.code === "ArrowLeft") {
+        scene.children[1].position.x += 1;
+    }
+    // right arrow key
+    if(event.code === "ArrowRight") {
+        scene.children[1].position.x -= 1;
+    }
+}
+
 windowResizeHandler();
 window.addEventListener('resize', windowResizeHandler, false);
+window.addEventListener('keydown', handleMoveCar, false);

@@ -6,7 +6,7 @@
  * handles window resizes.
  *
  */
-import { WebGLRenderer, PerspectiveCamera, Vector3 } from 'three';
+import { WebGLRenderer, PerspectiveCamera, Vector3, Clock } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { SeedScene } from 'scenes';
 
@@ -35,12 +35,31 @@ controls.minDistance = 4;
 controls.maxDistance = 16;
 controls.update();
 
+// source: https://jsfiddle.net/prisoner849/hg90shov/
+// global clock, direction, speed
+const clock = new Clock();
+const direction = new Vector3(0, 0, 1);
+const speed = 1; //units a second
+
+// source: https://jsfiddle.net/prisoner849/hg90shov/
+const moveRoad = (speed, direction) => {   
+    const delta = clock.getDelta();
+    scene.children[3].position.add(direction.clone().multiplyScalar(speed * delta));
+}
+
+
 // Render loop
 const onAnimationFrameHandler = (timeStamp) => {
     controls.update();
+
+    moveRoad(speed, direction);
+
     renderer.render(scene, camera);
+
     scene.update && scene.update(timeStamp);
     window.requestAnimationFrame(onAnimationFrameHandler);
+
+
 };
 window.requestAnimationFrame(onAnimationFrameHandler);
 
@@ -54,12 +73,12 @@ const windowResizeHandler = () => {
 
 const handleMoveCar = (event) => {
     // left arrow key
-    if(event.code === "ArrowLeft") {
-        scene.children[1].position.x += 2.1;
+    if (event.code === "ArrowLeft") {
+        scene.children[1].position.x += 1.8;
     }
     // right arrow key
-    if(event.code === "ArrowRight") {
-        scene.children[1].position.x -= 2.1;
+    if (event.code === "ArrowRight") {
+        scene.children[1].position.x -= 1.8;
     }
 }
 

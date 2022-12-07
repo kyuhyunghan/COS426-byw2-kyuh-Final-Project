@@ -23,7 +23,7 @@ const buildRoad = function() {
         color: 0x36454F
     });
     // road on the ground
-    let groundGeometry = new PlaneGeometry(10, 20000);
+    let groundGeometry = new PlaneGeometry(10, 10);
     let mesh = new Mesh(groundGeometry, groundMaterial);
     mesh.position.y = -0.99;
     mesh.rotation.x = -Math.PI / 2;

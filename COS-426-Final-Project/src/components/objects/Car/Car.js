@@ -10,7 +10,8 @@ class Car extends Group {
         const material = new MeshBasicMaterial( {color: 0xf0f0f0} );
 
         const cube = new Mesh( geometry, material );
-        cube.position.set( 0, 0, 0 );
+        // set cube on the road
+        cube.position.set( 0, -0.5, 0 );
 
         this.add(cube);
 

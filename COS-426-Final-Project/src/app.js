@@ -55,11 +55,11 @@ const windowResizeHandler = () => {
 const handleMoveCar = (event) => {
     // left arrow key
     if(event.code === "ArrowLeft") {
-        scene.children[1].position.x += 1.8;
+        scene.children[1].position.x += 2.1;
     }
     // right arrow key
     if(event.code === "ArrowRight") {
-        scene.children[1].position.x -= 1.8;
+        scene.children[1].position.x -= 2.1;
     }
 }
 

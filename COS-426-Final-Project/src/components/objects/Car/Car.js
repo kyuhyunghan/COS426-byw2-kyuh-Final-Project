@@ -6,12 +6,12 @@ class Car extends Group {
         super();
         this.name = 'car';
         // cannot find source?
-        const geometry = new BoxGeometry( 1, 1, 1 );
+        const geometry = new BoxGeometry( 1.5, 1.5, 1.5 );
         const material = new MeshBasicMaterial( {color: 0xf0f0f0} );
 
         const cube = new Mesh( geometry, material );
         // set cube on the road
-        cube.position.set( 0, -0.5, 0 );
+        cube.position.set( 0, -0.25, 0 );
 
         this.add(cube);
 

@@ -63,14 +63,14 @@ const moveCar = (speed, direction) => {
     
     const car = scene.getObjectByName('car');
 
-    console.log(delta)
+    // console.log(delta)
     // car.position.z -= (2.8);
     // car.position.z = 0;
 
     car.position.add(direction.clone().multiplyScalar(1));
-    // if(car.position.z < 0) {
-    //     car.position.z += 150;
-    // }
+    if(car.position.z < -140) {
+        car.position.z += 150;
+    }
 }
 
 // adapted from https://discourse.threejs.org/t/three-js-simple-jump/40411
@@ -97,6 +97,8 @@ const onAnimationFrameHandler = (timeStamp) => {
 
     moveRoadLine(speed, direction);
     moveCar(speed, direction);
+
+    // console.log(scene.getObjectByName('car').position.z);
     // always move car if not onGround
     // adapted from https://discourse.threejs.org/t/three-js-simple-jump/40411
     if(!scene.getObjectByName('ambulance').state.onGround){

@@ -1,0 +1,11 @@
+Model Information:
+* title:	Model A Ambulance
+* source:	https://sketchfab.com/3d-models/model-a-ambulance-a1c2373a25654117a731a1861403f372
+* author:	Libau Media (https://sketchfab.com/robinmikart)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Model A Ambulance" (https://sketchfab.com/3d-models/model-a-ambulance-a1c2373a25654117a731a1861403f372) by Libau Media (https://sketchfab.com/robinmikart) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

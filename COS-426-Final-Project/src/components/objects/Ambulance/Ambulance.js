@@ -1,4 +1,6 @@
 import { Group, BoxGeometry, MeshBasicMaterial, Mesh } from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import MODEL from './scene.gltf';
 
 class Ambulance extends Group {
     constructor() {
@@ -11,6 +13,17 @@ class Ambulance extends Group {
             velocity_y: 0,
             accelerationFactor: 1
         }
+
+        const loader = new GLTFLoader();
+
+        // 'Low Poly Airship' mesh from:
+        // https://sketchfab.com/3d-models/low-poly-airship-fa317292c6f142b68d64620251f99b40
+        // from user evherkarakoc
+        this.name = 'ambulance';
+        loader.load(MODEL, (gltf) => {
+            this.add(gltf.scene);
+        });
+
         const geometry = new BoxGeometry( 1.5, 1.5, 1.5 );
         const material = new MeshBasicMaterial( {color: 0xf0f0f0} );
 

@@ -11,7 +11,7 @@ class Car extends Group {
 
         const cube = new Mesh( geometry, material );
         // set cube on the road
-        cube.position.set( 0, -0.25, 50 );
+        cube.position.set( 0, -0.25, 125 );
 
         this.add(cube);
 

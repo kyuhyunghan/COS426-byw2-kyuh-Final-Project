@@ -4,7 +4,13 @@ class Car extends Group {
     constructor() {
         // Call parent Group() constructor
         super();
-        this.name = 'car';
+        this.name = 'ambulance';
+
+        this.state = {
+            onGround: true,
+            velocity_y: 0,
+            accelerationFactor: 1
+        }
         
         const geometry = new BoxGeometry( 1.5, 1.5, 1.5 );
         const material = new MeshBasicMaterial( {color: 0xf0f0f0} );

@@ -39,13 +39,20 @@ controls.update();
 // global clock, direction, speed
 const clock = new Clock();
 const direction = new Vector3(0, 0, -1);
-const speed = 65; //units a second
+const speed = 125; //units a second
 
 // source: https://jsfiddle.net/prisoner849/hg90shov/
 const moveRoadLine = (speed, direction) => {   
     const delta = clock.getDelta();
-    for(let i = 4; i < scene.children.length; i++){
-        scene.children[i].position.add(direction.clone().multiplyScalar(speed * delta));
+    const leadingLines = scene.getObjectByName('leadingLines');
+    const laggingLines = scene.getObjectByName('laggingLines');
+    leadingLines.position.add(direction.clone().multiplyScalar(speed * delta));
+    laggingLines.position.add(direction.clone().multiplyScalar(speed * delta));
+    if(leadingLines.position.z < -200) {
+        leadingLines.position.z += 150;
+    }
+    if(laggingLines.position.z < -200) {
+        laggingLines.position.z += 150;
     }
 }
 
@@ -74,11 +81,12 @@ const windowResizeHandler = () => {
 
 const handleMoveCar = (event) => {
     // left arrow key
-    if (event.code === "ArrowLeft") {
+    if (event.code === "ArrowLeft" && scene.children[1].position.x <= 0) {
         scene.children[1].position.x += 2.8;
+        console.log(scene.getObjectByName('leadingLines').position)
     }
     // right arrow key
-    if (event.code === "ArrowRight") {
+    if (event.code === "ArrowRight" && scene.children[1].position.x >= 0) {
         scene.children[1].position.x -= 2.8;
     }
 

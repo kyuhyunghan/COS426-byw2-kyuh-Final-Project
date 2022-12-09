@@ -5,7 +5,7 @@ class Car extends Group {
         // Call parent Group() constructor
         super();
         this.name = 'car';
-        // cannot find source?
+        
         const geometry = new BoxGeometry( 1.5, 1.5, 1.5 );
         const material = new MeshBasicMaterial( {color: 0xf0f0f0} );
 

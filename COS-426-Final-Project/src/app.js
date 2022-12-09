@@ -56,11 +56,28 @@ const moveRoadLine = (speed, direction) => {
     }
 }
 
+// source: https://jsfiddle.net/prisoner849/hg90shov/
+const moveCar = (speed, direction) => {   
+    const delta = clock.getDelta();
+    
+    const car = scene.getObjectByName('car');
+
+    console.log(delta)
+    // car.position.z -= (2.8);
+    // car.position.z = 0;
+
+    car.position.add(direction.clone().multiplyScalar(1));
+    // if(car.position.z < 0) {
+    //     car.position.z += 150;
+    // }
+}
+
 // Render loop
 const onAnimationFrameHandler = (timeStamp) => {
     controls.update();
 
     moveRoadLine(speed, direction);
+    moveCar(speed, direction);
 
     renderer.render(scene, camera);
 
@@ -79,24 +96,23 @@ const windowResizeHandler = () => {
     camera.updateProjectionMatrix();
 };
 
-const handleMoveCar = (event) => {
+const handleMoveAmbulance = (event) => {
     // left arrow key
-    if (event.code === "ArrowLeft" && scene.children[1].position.x <= 0) {
-        scene.children[1].position.x += 2.8;
-        console.log(scene.getObjectByName('leadingLines').position)
+    if (event.code === "ArrowLeft" && scene.getObjectByName('ambulance').position.x <= 0) {
+        scene.getObjectByName('ambulance').position.x += 2.8;
     }
     // right arrow key
-    if (event.code === "ArrowRight" && scene.children[1].position.x >= 0) {
-        scene.children[1].position.x -= 2.8;
+    if (event.code === "ArrowRight" && scene.getObjectByName('ambulance').position.x >= 0) {
+        scene.getObjectByName('ambulance').position.x -= 2.8;
     }
 
     // space logic
     if(event.code === "Space") {
-        scene.children[1].position.y += 2;
+        scene.getObjectByName('ambulance').position.y += 2;
     }
     
 }
 
 windowResizeHandler();
 window.addEventListener('resize', windowResizeHandler, false);
-window.addEventListener('keydown', handleMoveCar, false);
+window.addEventListener('keydown', handleMoveAmbulance, false);

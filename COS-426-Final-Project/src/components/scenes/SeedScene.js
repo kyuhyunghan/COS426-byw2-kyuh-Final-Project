@@ -1,7 +1,7 @@
 import * as Dat from 'dat.gui';
 import { Scene, Color, MeshStandardMaterial, Mesh, PlaneGeometry, Fog } from 'three';
 import { Flower, Land } from 'objects';
-import { Car, Road, Lines } from 'objects';
+import { Car, Ambulance, Road, Lines } from 'objects';
 import { BasicLights } from 'lights';
 
 // adapted from A5 code
@@ -38,14 +38,16 @@ class SeedScene extends Scene {
         // const land = new Land();
         // const flower = new Flower(this);
         const lights = new BasicLights();
-        const car = new Car();
+        const ambulance = new Ambulance();
+        const car = new Car()
+        car.name = 'car';
         const ground = buildGround();
         const road = new Road();
         const leadingLines = new Lines([150, 125, 100, 75, 50, 25]);
         const laggingLines = new Lines([300, 275, 250, 225, 200, 175]);
         leadingLines.name = "leadingLines";
         laggingLines.name = "laggingLines";
-        this.add(lights, car, ground, road, leadingLines, laggingLines);
+        this.add(lights, ambulance, ground, road, leadingLines, laggingLines, car);
     
         this.fog = new Fog(0x7ec0ee, 125, 150)
         // Populate GUI

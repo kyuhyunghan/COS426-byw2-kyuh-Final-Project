@@ -73,20 +73,16 @@ const moveCar = (speed, direction) => {
     // }
 }
 
+// adapted from https://discourse.threejs.org/t/three-js-simple-jump/40411
 const moveCarInAir = () => {
-    // const delta = clock.getDelta();
     const ambulance = scene.getObjectByName('ambulance');
-    // const delta = clock.getDelta();
     ambulance.position.y += ambulance.state.velocity_y / 500;
     // change velocity
     ambulance.state.velocity_y -= GRAVITY / 2000 * ambulance.state.accelerationFactor;
-    ambulance.state.accelerationFactor *= 1.05
-    if(ambulance.state.velocity_y <= 0) {
-        ambulance.state.accelerationFactor *= 1
-    }
+    ambulance.state.accelerationFactor *= 1.06;
     // reset if ambulance position is equal to or below ground
     if(ambulance.position.y <= 0){
-        ambulance.position.set( 0, 0, 0 );
+        ambulance.position.y = 0;
         // set velocity back to 0
         ambulance.state.velocity_y = 0;
         // set onGround to true
@@ -102,8 +98,8 @@ const onAnimationFrameHandler = (timeStamp) => {
     moveRoadLine(speed, direction);
     moveCar(speed, direction);
     // always move car if not onGround
+    // adapted from https://discourse.threejs.org/t/three-js-simple-jump/40411
     if(!scene.getObjectByName('ambulance').state.onGround){
-        console.log(scene.getObjectByName('ambulance').position.y)
         moveCarInAir()
     }
 
@@ -124,7 +120,7 @@ const windowResizeHandler = () => {
     camera.updateProjectionMatrix();
 };
 
-const handleMoveCar = (event) => {
+const handleMoveAmbulance = (event) => {
     const ambulance = scene.getObjectByName('ambulance');
     // left arrow key
     if (event.code === "ArrowLeft" && ambulance.position.x <= 0) {
@@ -136,7 +132,8 @@ const handleMoveCar = (event) => {
     }
 
     // space logic
-    if(event.code === "Space") {
+    // adapted from https://discourse.threejs.org/t/three-js-simple-jump/40411
+    if(event.code === "Space" && ambulance.position.y <= 2) {
         // increase velocity 
         ambulance.state.velocity_y = 50;
         // set onGround to false

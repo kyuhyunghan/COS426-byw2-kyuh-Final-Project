@@ -3283,18 +3283,18 @@
   "buffers": [
     {
       "byteLength": 1272584,
-      "uri": "scene.bin"
+      "uri": "https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/COS-426-Final-Project/src/components/objects/Ambulance/scene.bin"
     }
   ],
   "images": [
     {
-      "uri": "textures/number_plate_baseColor.jpeg"
+      "uri": "https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/COS-426-Final-Project/src/components/objects/Ambulance/textures/number_plate_baseColor.jpeg"
     },
     {
-      "uri": "textures/amberlamps_baseColor.png"
+      "uri": "https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/COS-426-Final-Project/src/components/objects/Ambulance/textures/amberlamps_baseColor.png"
     },
     {
-      "uri": "textures/curtain_baseColor.jpeg"
+      "uri": "https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/COS-426-Final-Project/src/components/objects/Ambulance/textures/curtain_baseColor.jpeg"
     }
   ],
   "materials": [

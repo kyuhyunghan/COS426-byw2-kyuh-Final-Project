@@ -6,7 +6,7 @@
  * handles window resizes.
  *
  */
-import { WebGLRenderer, PerspectiveCamera, Vector3, Clock } from 'three';
+import { WebGLRenderer, PerspectiveCamera, Vector3, Clock, Audio, AudioLoader } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { SeedScene } from 'scenes';
 
@@ -14,10 +14,16 @@ import { SeedScene } from 'scenes';
 const scene = new SeedScene();
 const camera = new PerspectiveCamera();
 const renderer = new WebGLRenderer({ antialias: true });
+const listener = new AudioListener(); // audio listener
+camera.add( listener );
+const audioLoader = new AudioLoader();
+
 
 // Set up camera
 camera.position.set(0, 2, -10);
 camera.lookAt(new Vector3(0, 0, 0));
+
+// https://pixabay.com/sound-effects/cartoon-jump-6462/
 
 // Set up renderer, canvas, and minor CSS adjustments
 renderer.setPixelRatio(window.devicePixelRatio);
@@ -79,7 +85,7 @@ const moveCarInAir = () => {
     ambulance.position.y += ambulance.state.velocity_y / 500;
     // change velocity
     ambulance.state.velocity_y -= GRAVITY / 2000 * ambulance.state.accelerationFactor;
-    ambulance.state.accelerationFactor *= 1.06;
+    ambulance.state.accelerationFactor *= 1.1;
     // reset if ambulance position is equal to or below ground
     if(ambulance.position.y <= 0){
         ambulance.position.y = 0;
@@ -90,6 +96,8 @@ const moveCarInAir = () => {
         ambulance.state.accelerationFactor = 1;
     }
 }
+
+const jumpSound = new Audio(listener);
 
 // Render loop
 const onAnimationFrameHandler = (timeStamp) => {

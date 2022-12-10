@@ -21,17 +21,19 @@ class Ambulance extends Group {
         // from user evherkarakoc
         this.name = 'ambulance';
         loader.load(MODEL, (gltf) => {
+            gltf.scene.scale.set(0.01,0.01,0.01)
+            // gltf.position.set(0, -0.25, 0)
             this.add(gltf.scene);
         });
 
-        const geometry = new BoxGeometry( 1.5, 1.5, 1.5 );
-        const material = new MeshBasicMaterial( {color: 0xf0f0f0} );
+        // const geometry = new BoxGeometry( 1.5, 1.5, 1.5 );
+        // const material = new MeshBasicMaterial( {color: 0xf0f0f0} );
 
-        const cube = new Mesh( geometry, material );
-        // set cube on the road
-        cube.position.set( 0, -0.25, 0 );
+        // const cube = new Mesh( geometry, material );
+        // // set cube on the road
+        // cube.position.set( 0, -0.25, 0 );
 
-        this.add(cube);
+        // this.add(cube);
 
     }
 }

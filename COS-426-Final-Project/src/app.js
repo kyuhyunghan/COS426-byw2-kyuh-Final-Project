@@ -6,7 +6,7 @@
  * handles window resizes.
  *
  */
-import { WebGLRenderer, PerspectiveCamera, Vector3, Clock, Audio, AudioLoader } from 'three';
+import { WebGLRenderer, PerspectiveCamera, Vector3, Clock, Audio, AudioLoader, AudioListener } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { SeedScene } from 'scenes';
 
@@ -23,7 +23,6 @@ const audioLoader = new AudioLoader();
 camera.position.set(0, 2, -10);
 camera.lookAt(new Vector3(0, 0, 0));
 
-// https://pixabay.com/sound-effects/cartoon-jump-6462/
 
 // Set up renderer, canvas, and minor CSS adjustments
 renderer.setPixelRatio(window.devicePixelRatio);
@@ -97,7 +96,17 @@ const moveCarInAir = () => {
     }
 }
 
+// jump: https://pixabay.com/sound-effects/cartoon-jump-6462/
+// background: https://pixabay.com/music/main-title-emotional-inspiring-epic-trailer-11258/
+const sounds = {
+    jump: 'https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/COS-426-Final-Project/src/components/sounds/jump.mp3'
+}
 const jumpSound = new Audio(listener);
+audioLoader.load(sounds['jump'], function(buffer){
+    jumpSound.setBuffer( buffer );
+	jumpSound.setLoop( false );
+	jumpSound.setVolume( 1 );
+});
 
 // Render loop
 const onAnimationFrameHandler = (timeStamp) => {
@@ -148,6 +157,7 @@ const handleMoveAmbulance = (event) => {
         ambulance.state.velocity_y = 50;
         // set onGround to false
         ambulance.state.onGround = false;
+        jumpSound.play();
     }
 }
 

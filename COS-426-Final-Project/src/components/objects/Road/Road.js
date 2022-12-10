@@ -1,8 +1,10 @@
-import { Group, Mesh, PlaneGeometry, MeshStandardMaterial } from 'three';
+import { Group, Mesh, PlaneGeometry, MeshStandardMaterial, TextureLoader } from 'three';
 
 const buildRoad = function() {
+    const loader = new TextureLoader();
     let groundMaterial = new MeshStandardMaterial({
-        color: 0x0f0f0f
+        color: 0x0f0f0f,
+        map: loader.load('textures/road_texture.jpg')
     });
     // road on the ground
     let groundGeometry = new PlaneGeometry(10, 10000);

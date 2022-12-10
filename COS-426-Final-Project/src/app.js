@@ -86,8 +86,8 @@ const moveCarInAir = () => {
     ambulance.state.velocity_y -= GRAVITY / 2000 * ambulance.state.accelerationFactor;
     ambulance.state.accelerationFactor *= 1.1;
     // reset if ambulance position is equal to or below ground
-    if(ambulance.position.y <= 0){
-        ambulance.position.y = 0;
+    if(ambulance.position.y <= -0.65){
+        ambulance.position.y = -0.65;
         // set velocity back to 0
         ambulance.state.velocity_y = 0;
         // set onGround to true
@@ -98,14 +98,23 @@ const moveCarInAir = () => {
 
 // jump: https://pixabay.com/sound-effects/cartoon-jump-6462/
 // background: https://pixabay.com/music/main-title-emotional-inspiring-epic-trailer-11258/
+// background for inserting sound: https://www.youtube.com/watch?v=91sjdKmqxdE
 const sounds = {
-    jump: 'https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/COS-426-Final-Project/src/components/sounds/jump.mp3'
+    jump: 'https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/COS-426-Final-Project/src/components/sounds/jump.mp3',
+    background: 'https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/COS-426-Final-Project/src/components/sounds/background.mp3'
 }
 const jumpSound = new Audio(listener);
 audioLoader.load(sounds['jump'], function(buffer){
     jumpSound.setBuffer( buffer );
 	jumpSound.setLoop( false );
 	jumpSound.setVolume( 1 );
+});
+const backgroundSound = new Audio(listener);
+audioLoader.load(sounds['background'], function(buffer){
+    backgroundSound.setBuffer( buffer );
+	backgroundSound.setLoop( true );
+	backgroundSound.setVolume( 0.4 );
+    backgroundSound.play()
 });
 
 // Render loop
@@ -144,6 +153,7 @@ const handleMoveAmbulance = (event) => {
     // left arrow key
     if (event.code === "ArrowLeft" && ambulance.position.x <= 0) {
         ambulance.position.x += 2.8;
+        console.log(ambulance.position.y)
     }
     // right arrow key
     if (event.code === "ArrowRight" && ambulance.position.x >= 0) {

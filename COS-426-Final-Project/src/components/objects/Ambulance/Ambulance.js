@@ -21,8 +21,8 @@ class Ambulance extends Group {
         // from user evherkarakoc
         this.name = 'ambulance';
         loader.load(MODEL, (gltf) => {
-            gltf.scene.scale.set(0.01,0.01,0.01)
-            // gltf.position.set(0, -0.25, 0)
+            gltf.scene.scale.set(0.01, 0.01, 0.01);
+            // gltf.scene.children[0].position.set(0, -0.25, 0);
             this.add(gltf.scene);
         });
 

@@ -1,5 +1,5 @@
 import * as Dat from 'dat.gui';
-import { Scene, Color, MeshStandardMaterial, Mesh, PlaneGeometry, Fog } from 'three';
+import { Scene, Color, MeshStandardMaterial, Mesh, PlaneGeometry, Fog, Vector3 } from 'three';
 import { Flower, Land } from 'objects';
 import { Car, Ambulance, Road, Lines } from 'objects';
 import { BasicLights } from 'lights';
@@ -39,6 +39,8 @@ class SeedScene extends Scene {
         // const flower = new Flower(this);
         const lights = new BasicLights();
         const ambulance = new Ambulance();
+        ambulance.position.y = -0.65;
+        console.log(ambulance)
         const car = new Car()
         car.name = 'car';
         const ground = buildGround();

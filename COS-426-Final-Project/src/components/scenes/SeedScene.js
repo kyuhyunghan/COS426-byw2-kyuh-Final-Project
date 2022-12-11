@@ -65,9 +65,9 @@ class SeedScene extends Scene {
             const xCoord = this.chooseXCoord(i)
             const zCoord = this.chooseInitialZ(i)
             // used for ensuring that new cars are spawned correctly
-            const offset = -zCoord; 
+            // const offset = -zCoord; 
             const name = 'car' + i
-            cars.push(new Car(name, xCoord, zCoord, offset))
+            cars.push(new Car(name, xCoord, zCoord))
         }
         const ground = buildGround();
         const road = new Road();

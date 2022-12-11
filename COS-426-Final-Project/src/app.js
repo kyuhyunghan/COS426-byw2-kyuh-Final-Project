@@ -44,8 +44,9 @@ controls.update();
 // global clock, direction, speed
 const clock = new Clock();
 const direction = new Vector3(0, 0, -1);
-const speed = 175; //units a second
+let speed = 100; //units a second
 const GRAVITY = 1500;
+let freeze = false;
 
 // source: https://jsfiddle.net/prisoner849/hg90shov/
 const moveRoadLine = (speed, direction) => {   
@@ -78,8 +79,8 @@ const moveCar = (name, direction) => {
     // car.position.z = 0;
 
     car.position.add(direction.clone().multiplyScalar(1 * (speed / 175)));
-    if(car.position.z < car.offset - 15) {
-        const zOffset = getRandomInt(150, 300);
+    if(car.position.z < -125) {
+        const zOffset = getRandomInt(250, 350);
         car.position.z += zOffset;
     }
 }
@@ -90,7 +91,7 @@ const moveCarInAir = () => {
     ambulance.position.y += ambulance.state.velocity_y / 500;
     // change velocity
     ambulance.state.velocity_y -= GRAVITY / 2000 * ambulance.state.accelerationFactor;
-    ambulance.state.accelerationFactor *= 1.125;
+    ambulance.state.accelerationFactor *= 1.1;
     // reset if ambulance position is equal to or below ground
     if(ambulance.position.y <= -0.65){
         ambulance.position.y = -0.65;
@@ -130,19 +131,24 @@ const onAnimationFrameHandler = (timeStamp) => {
     moveRoadLine(speed, direction);
     for(let i = 1; i <= 12; i++){
         const name = "car" + i;
-        moveCar(name, direction);
+        if(!freeze) moveCar(name, direction);
     }
 
     // console.log(scene.getObjectByName('car').position.z);
     // always move car if not onGround
     // adapted from https://discourse.threejs.org/t/three-js-simple-jump/40411
     if(!scene.getObjectByName('ambulance').state.onGround){
-        moveCarInAir()
+        if(!freeze) moveCarInAir()
     }
-
-    if (detectCollisions()) {
-        window.location.reload();
-    } 
+    for(let i = 1; i <= 12; i++){
+        let name = "car" + i;
+        console.log(name)
+        let car = scene.getObjectByName(name);
+        if (detectCollisions(car)) {
+            speed = 0
+            freeze = true
+        } 
+    }
 
     renderer.render(scene, camera);
 
@@ -184,27 +190,27 @@ const handleMoveAmbulance = (event) => {
     }
 }
 
-const detectCollisions = () => {
+const detectCollisions = (car) => {
     const ambulance = scene.getObjectByName('ambulance');
     var bboxAmbulance = new Box3().setFromObject(ambulance);
-    for(let i = 1; i <= 12; i++){
-        const name = "car" + i;
-        const car = scene.getObjectByName(name);
-        const carOffsetZ = car.offset;
-        const bboxCar = new Box3().setFromObject(car);
-        console.log(car.position.x);
-        if (ambulance.position.x != car.position.x) {
-            return false;
-        }
-      
-        if ((bboxCar.min.z <= bboxAmbulance.max.z) && (bboxCar.min.z >= bboxAmbulance.min.z) && (bboxAmbulance.min.y <= bboxCar.max.y)) {
-            return true;
-        }
-        if ((bboxCar.max.z <= bboxAmbulance.max.z) && (bboxCar.max.z >= bboxAmbulance.min.z) && (bboxAmbulance.min.y <= bboxCar.max.y)) {
-            return true;
-        }
+    
+    const bboxCar = new Box3().setFromObject(car);
+    // if car not in same lane ignore
+    if (ambulance.position.x != car.position.x) {
         return false;
     }
+    // collision from front
+    if ((bboxCar.min.z <= bboxAmbulance.max.z) && (bboxCar.min.z >= bboxAmbulance.min.z) && (bboxAmbulance.min.y <= bboxCar.max.y)) {
+        return true;
+    }
+
+    // collision from back
+    if ((bboxCar.max.z <= bboxAmbulance.max.z) && (bboxCar.max.z >= bboxAmbulance.min.z) && (bboxAmbulance.min.y <= bboxCar.max.y)) {
+        return true;
+    }
+
+    // not collision otherwise
+    return false;
  }
  
 

@@ -6,7 +6,7 @@
  * handles window resizes.
  *
  */
-import { WebGLRenderer, PerspectiveCamera, Vector3, Clock, Audio, AudioLoader, AudioListener } from 'three';
+import { WebGLRenderer, PerspectiveCamera, Vector3, Clock, Audio, AudioLoader, AudioListener, Box3 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { SeedScene } from 'scenes';
 
@@ -140,6 +140,10 @@ const onAnimationFrameHandler = (timeStamp) => {
         moveCarInAir()
     }
 
+    if (detectCollisions()) {
+        window.location.reload();
+    } 
+
     renderer.render(scene, camera);
 
     scene.update && scene.update(timeStamp);
@@ -179,6 +183,30 @@ const handleMoveAmbulance = (event) => {
         jumpSound.play();
     }
 }
+
+const detectCollisions = () => {
+    const ambulance = scene.getObjectByName('ambulance');
+    var bboxAmbulance = new Box3().setFromObject(ambulance);
+    for(let i = 1; i <= 12; i++){
+        const name = "car" + i;
+        const car = scene.getObjectByName(name);
+        const carOffsetZ = car.offset;
+        const bboxCar = new Box3().setFromObject(car);
+        console.log(car.position.x);
+        if (ambulance.position.x != car.position.x) {
+            return false;
+        }
+      
+        if ((bboxCar.min.z <= bboxAmbulance.max.z) && (bboxCar.min.z >= bboxAmbulance.min.z) && (bboxAmbulance.min.y <= bboxCar.max.y)) {
+            return true;
+        }
+        if ((bboxCar.max.z <= bboxAmbulance.max.z) && (bboxCar.max.z >= bboxAmbulance.min.z) && (bboxAmbulance.min.y <= bboxCar.max.y)) {
+            return true;
+        }
+        return false;
+    }
+ }
+ 
 
 windowResizeHandler();
 window.addEventListener('resize', windowResizeHandler, false);

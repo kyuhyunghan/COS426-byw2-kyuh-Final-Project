@@ -62,19 +62,25 @@ const moveRoadLine = (speed, direction) => {
     }
 }
 
+// copied from https://stackoverflow.com/questions/18921134/math-random-numbers-between-50-and-80
+function getRandomInt (min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 // source: https://jsfiddle.net/prisoner849/hg90shov/
-const moveCar = (speed, direction) => {   
-    const delta = clock.getDelta();
+const moveCar = (name, direction) => {   
+    // const delta = clock.getDelta();
     
-    const car = scene.getObjectByName('car');
+    const car = scene.getObjectByName(name);
 
     // console.log(delta)
     // car.position.z -= (2.8);
     // car.position.z = 0;
 
-    car.position.add(direction.clone().multiplyScalar(1));
-    if(car.position.z < -140) {
-        car.position.z += 150;
+    car.position.add(direction.clone().multiplyScalar(1 * (speed / 175)));
+    if(car.position.z < car.offset - 15) {
+        const zOffset = getRandomInt(150, 300);
+        car.position.z += zOffset;
     }
 }
 
@@ -84,7 +90,7 @@ const moveCarInAir = () => {
     ambulance.position.y += ambulance.state.velocity_y / 500;
     // change velocity
     ambulance.state.velocity_y -= GRAVITY / 2000 * ambulance.state.accelerationFactor;
-    ambulance.state.accelerationFactor *= 1.1;
+    ambulance.state.accelerationFactor *= 1.125;
     // reset if ambulance position is equal to or below ground
     if(ambulance.position.y <= -0.65){
         ambulance.position.y = -0.65;
@@ -114,7 +120,7 @@ audioLoader.load(sounds['background'], function(buffer){
     backgroundSound.setBuffer( buffer );
 	backgroundSound.setLoop( true );
 	backgroundSound.setVolume( 0.4 );
-    backgroundSound.play()
+    // backgroundSound.play()
 });
 
 // Render loop
@@ -122,7 +128,10 @@ const onAnimationFrameHandler = (timeStamp) => {
     controls.update();
 
     moveRoadLine(speed, direction);
-    moveCar(speed, direction);
+    for(let i = 1; i <= 12; i++){
+        const name = "car" + i;
+        moveCar(name, direction);
+    }
 
     // console.log(scene.getObjectByName('car').position.z);
     // always move car if not onGround
@@ -153,7 +162,7 @@ const handleMoveAmbulance = (event) => {
     // left arrow key
     if (event.code === "ArrowLeft" && ambulance.position.x <= 0) {
         ambulance.position.x += 2.8;
-        console.log(ambulance.position.y)
+        console.log(scene)
     }
     // right arrow key
     if (event.code === "ArrowRight" && ambulance.position.x >= 0) {

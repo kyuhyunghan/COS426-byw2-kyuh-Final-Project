@@ -19,6 +19,26 @@ const buildGround = function() {
 }
 
 class SeedScene extends Scene {
+
+    // copied from https://stackoverflow.com/questions/18921134/math-random-numbers-between-50-and-80
+    getRandomInt (min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    chooseXCoord(i) {
+        if(i % 3 == 1) return 2.8
+        if(i % 3 == 2) return 0
+        if(i % 3 == 0) return -2.8
+    }
+
+    chooseInitialZ(i) {
+        if(i <= 3) return this.getRandomInt(100, 200)
+        if(i <= 6) return this.getRandomInt(150, 250)
+        if(i <= 9) return this.getRandomInt(200, 300)
+        if(i <= 12) return this.getRandomInt(250, 300)
+    }
+
+
     constructor() {
         // Call parent Scene() constructor
         super();
@@ -40,16 +60,21 @@ class SeedScene extends Scene {
         const lights = new BasicLights();
         const ambulance = new Ambulance();
         ambulance.position.y = -0.65;
-        console.log(ambulance)
-        const car = new Car()
-        car.name = 'car';
+        const cars = [];
+        for(let i = 1; i <= 12; i++){
+            const xCoord = this.chooseXCoord(i)
+            const zCoord = this.chooseInitialZ(i)
+            // used for ensuring that new cars are spawned correctly
+            const offset = -zCoord; 
+            const name = 'car' + i
+            cars.push(new Car(name, xCoord, zCoord, offset))
+        }
         const ground = buildGround();
         const road = new Road();
-        const leadingLines = new Lines([150, 125, 100, 75, 50, 25]);
-        const laggingLines = new Lines([300, 275, 250, 225, 200, 175]);
-        leadingLines.name = "leadingLines";
-        laggingLines.name = "laggingLines";
-        this.add(lights, ambulance, ground, road, leadingLines, laggingLines, car);
+        const leadingLines = new Lines("leadingLines", [150, 125, 100, 75, 50, 25]);
+        const laggingLines = new Lines("laggingLines", [300, 275, 250, 225, 200, 175]);
+        this.add(lights, ambulance, ground, road, leadingLines, laggingLines);
+        this.add(...cars)
     
         this.fog = new Fog(0x7ec0ee, 125, 150)
         // Populate GUI

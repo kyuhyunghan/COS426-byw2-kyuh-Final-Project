@@ -24,13 +24,14 @@ const buildRoadLines = function(z) {
 }
 
 class Lines extends Group {
-    constructor(zCoords) {
+    constructor(name, zCoords) {
         // Call parent Group() constructor
         super();
         
         const roadLines = buildRoadLines(zCoords);
         const group = new Group();
         group.add(...roadLines);
+        group.name = name;
         return group
     }
 }

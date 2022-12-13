@@ -110,13 +110,14 @@ const moveCarInAir = () => {
 // ambulance: https://pixabay.com/sound-effects/search/ambulance/
 // collision: https://pixabay.com/sound-effects/clank-car-crash-collision-6206/ 
 // whoosh: https://pixabay.com/sound-effects/whoosh-6316/
+// background2: https://pixabay.com/music/synthwave-neon-gaming-128925/
 // background for inserting sound: https://www.youtube.com/watch?v=91sjdKmqxdE
 const sounds = {
     jump: 'https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/COS-426-Final-Project/src/components/sounds/jump.mp3',
-    background: 'https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/COS-426-Final-Project/src/components/sounds/background.mp3',
+    background: 'https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/COS-426-Final-Project/src/components/sounds/background2.mp3',
     ambulance: 'https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/COS-426-Final-Project/src/components/sounds/ambulance.m4a',
     collision: 'https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/COS-426-Final-Project/src/components/sounds/collision.mp3',
-    whoosh: 'https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/COS-426-Final-Project/src/components/sounds/whoosh.mp3',
+    whoosh: 'https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/COS-426-Final-Project/src/components/sounds/whoosh.m4a',
 }
 
 const jumpSound = new Audio(listener);
@@ -141,7 +142,7 @@ audioLoader.load(sounds['collision'], function(buffer){
 });
 
 const backgroundSound = new Audio(listener);
-audioLoader.load(sounds['background'], function(buffer){
+audioLoader.load(sounds['background2'], function(buffer){
     backgroundSound.setBuffer( buffer );
 	backgroundSound.setLoop( true );
 	backgroundSound.setVolume( 0.4 );
@@ -162,7 +163,7 @@ const onAnimationFrameHandler = (timeStamp) => {
     controls.update();
 
     moveRoadLine(speed, direction);
-    speed += 1/200; // speed gets progressively quicker
+    if(!freeze) speed += 1/20; // speed gets progressively quicker
     for(let i = 1; i <= 12; i++){
         const name = "car" + i;
         if(!freeze) moveCar(name, direction);
@@ -241,15 +242,11 @@ const detectCollisions = (car) => {
     }
     // collision from front
     if ((bboxCar.min.z <= bboxAmbulance.max.z) && (bboxCar.min.z >= bboxAmbulance.min.z) && (bboxAmbulance.min.y <= bboxCar.max.y)) {
-        console.log("1" + car.position.x);
-        console.log(ambulance.position.x);
         return true;
     }
 
     // collision from back
     if ((bboxCar.max.z <= bboxAmbulance.max.z) && (bboxCar.max.z >= bboxAmbulance.min.z) && (bboxAmbulance.min.y <= bboxCar.max.y)) {
-        console.log("2" + car.position.x);
-        console.log(ambulance.position.x);
         return true;
     }
 

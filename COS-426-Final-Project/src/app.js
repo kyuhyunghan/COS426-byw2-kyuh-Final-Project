@@ -121,7 +121,7 @@ audioLoader.load(sounds['background'], function(buffer){
     backgroundSound.setBuffer( buffer );
 	backgroundSound.setLoop( true );
 	backgroundSound.setVolume( 0.4 );
-    // backgroundSound.play()
+    backgroundSound.play()
 });
 
 // Render loop

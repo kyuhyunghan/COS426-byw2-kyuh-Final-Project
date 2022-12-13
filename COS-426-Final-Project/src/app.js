@@ -79,7 +79,7 @@ const moveCar = (name, direction) => {
     // car.position.z = 0;
 
     car.position.add(direction.clone().multiplyScalar(1 * (speed / 175)));
-    if(car.position.z < -125) {
+    if(car.position.z < -175) {
         const zOffset = getRandomInt(250, 350);
         car.position.z += zOffset;
     }

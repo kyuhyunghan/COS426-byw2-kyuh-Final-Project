@@ -40,6 +40,7 @@ controls.minDistance = 4;
 controls.maxDistance = 16;
 controls.update();
 
+// GLOBAL VARIABLES
 // source: https://jsfiddle.net/prisoner849/hg90shov/
 // global clock, direction, speed
 const clock = new Clock();
@@ -47,6 +48,7 @@ const direction = new Vector3(0, 0, -1);
 let speed = 100; //units a second
 const GRAVITY = 1500;
 let freeze = false;
+let playCollisionSound = true;
 
 // source: https://jsfiddle.net/prisoner849/hg90shov/
 const moveRoadLine = (speed, direction) => {   
@@ -106,12 +108,15 @@ const moveCarInAir = () => {
 // jump: https://pixabay.com/sound-effects/cartoon-jump-6462/
 // background: https://pixabay.com/music/main-title-emotional-inspiring-epic-trailer-11258/
 // ambulance: https://pixabay.com/sound-effects/search/ambulance/
+// collision: https://pixabay.com/sound-effects/clank-car-crash-collision-6206/ 
+// whoosh: https://pixabay.com/sound-effects/whoosh-6316/
 // background for inserting sound: https://www.youtube.com/watch?v=91sjdKmqxdE
 const sounds = {
     jump: 'https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/COS-426-Final-Project/src/components/sounds/jump.mp3',
     background: 'https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/COS-426-Final-Project/src/components/sounds/background.mp3',
     ambulance: 'https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/COS-426-Final-Project/src/components/sounds/ambulance.m4a',
-    ambulance: 'https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/COS-426-Final-Project/src/components/sounds/collision.mp3',
+    collision: 'https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/COS-426-Final-Project/src/components/sounds/collision.mp3',
+    whoosh: 'https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/COS-426-Final-Project/src/components/sounds/whoosh.mp3',
 }
 
 const jumpSound = new Audio(listener);
@@ -119,6 +124,13 @@ audioLoader.load(sounds['jump'], function(buffer){
     jumpSound.setBuffer( buffer );
 	jumpSound.setLoop( false );
 	jumpSound.setVolume( 1 );
+});
+
+const whooshSound = new Audio(listener);
+audioLoader.load(sounds['whoosh'], function(buffer){
+    whooshSound.setBuffer( buffer );
+	whooshSound.setLoop( false );
+	whooshSound.setVolume( 1 );
 });
 
 const collisionSound = new Audio(listener);
@@ -144,11 +156,13 @@ audioLoader.load(sounds['ambulance'], function(buffer){
     ambulanceSound.play()
 });
 
+
 // Render loop
 const onAnimationFrameHandler = (timeStamp) => {
     controls.update();
 
     moveRoadLine(speed, direction);
+    speed += 1/200; // speed gets progressively quicker
     for(let i = 1; i <= 12; i++){
         const name = "car" + i;
         if(!freeze) moveCar(name, direction);
@@ -168,9 +182,11 @@ const onAnimationFrameHandler = (timeStamp) => {
             speed = 0
             freeze = true
             backgroundSound.stop();
-            collisionSound.play();
+            ambulanceSound.stop();
+            if(playCollisionSound) collisionSound.play();
+            playCollisionSound = false
         } 
-        console.log(name + car.position.x)
+        // console.log(name + car.position.x)
     }
 
     renderer.render(scene, camera);
@@ -195,16 +211,17 @@ const handleMoveAmbulance = (event) => {
     // left arrow key
     if (event.code === "ArrowLeft" && ambulance.position.x <= 0) {
         ambulance.position.x += 2.8;
-        console.log(scene)
+        whooshSound.play();
     }
     // right arrow key
     if (event.code === "ArrowRight" && ambulance.position.x >= 0) {
         ambulance.position.x -= 2.8;
+        whooshSound.play();
     }
 
     // space logic
     // adapted from https://discourse.threejs.org/t/three-js-simple-jump/40411
-    if(event.code === "Space" && ambulance.position.y <= 2) {
+    if(event.code === "Space" && ambulance.position.y <= 1.3) {
         // increase velocity 
         ambulance.state.velocity_y = 50;
         // set onGround to false

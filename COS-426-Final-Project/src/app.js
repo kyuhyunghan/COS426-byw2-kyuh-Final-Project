@@ -147,6 +147,7 @@ const onAnimationFrameHandler = (timeStamp) => {
         if (detectCollisions(car)) {
             speed = 0
             freeze = true
+            backgroundSound.stop();
         } 
         console.log(name + car.position.x)
     }

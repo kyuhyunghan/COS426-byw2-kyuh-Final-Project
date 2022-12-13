@@ -23,9 +23,9 @@ class Car extends Group {
 
         // https://sketchfab.com/3d-models/lowpoly-car-pack-94fcef58d8d04af2b6bf42f2949227eb
         loader.load(MODEL, (gltf) => {
-            gltf.scene.scale.set(1, 1, 1);
+            gltf.scene.scale.set(0.7, 0.7, 0.7);
             this.position.x = xCoord;
-            this.position.y = -0.25;
+            this.position.y = -0.5;
             this.position.z = zCoord;
             this.add(gltf.scene);
         });

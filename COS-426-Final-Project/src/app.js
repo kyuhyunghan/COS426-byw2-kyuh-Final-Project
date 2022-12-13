@@ -105,23 +105,43 @@ const moveCarInAir = () => {
 
 // jump: https://pixabay.com/sound-effects/cartoon-jump-6462/
 // background: https://pixabay.com/music/main-title-emotional-inspiring-epic-trailer-11258/
+// ambulance: https://pixabay.com/sound-effects/search/ambulance/
 // background for inserting sound: https://www.youtube.com/watch?v=91sjdKmqxdE
 const sounds = {
     jump: 'https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/COS-426-Final-Project/src/components/sounds/jump.mp3',
-    background: 'https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/COS-426-Final-Project/src/components/sounds/background.mp3'
+    background: 'https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/COS-426-Final-Project/src/components/sounds/background.mp3',
+    ambulance: 'https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/COS-426-Final-Project/src/components/sounds/ambulance.m4a',
+    ambulance: 'https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/COS-426-Final-Project/src/components/sounds/collision.mp3',
 }
+
 const jumpSound = new Audio(listener);
 audioLoader.load(sounds['jump'], function(buffer){
     jumpSound.setBuffer( buffer );
 	jumpSound.setLoop( false );
 	jumpSound.setVolume( 1 );
 });
+
+const collisionSound = new Audio(listener);
+audioLoader.load(sounds['collision'], function(buffer){
+    collisionSound.setBuffer( buffer );
+	collisionSound.setLoop( false );
+	collisionSound.setVolume( 0.8 );
+});
+
 const backgroundSound = new Audio(listener);
 audioLoader.load(sounds['background'], function(buffer){
     backgroundSound.setBuffer( buffer );
 	backgroundSound.setLoop( true );
 	backgroundSound.setVolume( 0.4 );
     backgroundSound.play()
+});
+
+const ambulanceSound = new Audio(listener);
+audioLoader.load(sounds['ambulance'], function(buffer){
+    ambulanceSound.setBuffer( buffer );
+	ambulanceSound.setLoop( true );
+	ambulanceSound.setVolume( 0.4 );
+    ambulanceSound.play()
 });
 
 // Render loop
@@ -148,6 +168,7 @@ const onAnimationFrameHandler = (timeStamp) => {
             speed = 0
             freeze = true
             backgroundSound.stop();
+            collisionSound.play();
         } 
         console.log(name + car.position.x)
     }

@@ -79,7 +79,7 @@ const moveCar = (name, direction) => {
     // car.position.z = 0;
 
     car.position.add(direction.clone().multiplyScalar(1 * (speed / 175)));
-    if(car.position.z < -175) {
+    if(car.position.z < -125) {
         const zOffset = getRandomInt(250, 350);
         car.position.z += zOffset;
     }
@@ -148,6 +148,7 @@ const onAnimationFrameHandler = (timeStamp) => {
             speed = 0
             freeze = true
         } 
+        console.log(name + car.position.x)
     }
 
     renderer.render(scene, camera);
@@ -201,11 +202,15 @@ const detectCollisions = (car) => {
     }
     // collision from front
     if ((bboxCar.min.z <= bboxAmbulance.max.z) && (bboxCar.min.z >= bboxAmbulance.min.z) && (bboxAmbulance.min.y <= bboxCar.max.y)) {
+        console.log("1" + car.position.x);
+        console.log(ambulance.position.x);
         return true;
     }
 
     // collision from back
     if ((bboxCar.max.z <= bboxAmbulance.max.z) && (bboxCar.max.z >= bboxAmbulance.min.z) && (bboxAmbulance.min.y <= bboxCar.max.y)) {
+        console.log("2" + car.position.x);
+        console.log(ambulance.position.x);
         return true;
     }
 

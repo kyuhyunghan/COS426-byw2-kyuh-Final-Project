@@ -142,7 +142,7 @@ const onAnimationFrameHandler = (timeStamp) => {
     }
     for(let i = 1; i <= 12; i++){
         let name = "car" + i;
-        console.log(name)
+        // console.log(name)
         let car = scene.getObjectByName(name);
         if (detectCollisions(car)) {
             speed = 0

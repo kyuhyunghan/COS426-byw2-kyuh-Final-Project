@@ -16,9 +16,8 @@ class Ambulance extends Group {
 
         const loader = new GLTFLoader();
 
-        // 'Low Poly Airship' mesh from:
-        // https://sketchfab.com/3d-models/low-poly-airship-fa317292c6f142b68d64620251f99b40
-        // from user evherkarakoc
+        // https://github.com/harveyw24/Glider
+        // 
         this.name = 'ambulance';
         loader.load(MODEL, (gltf) => {
             gltf.scene.scale.set(0.008, 0.008, 0.008);

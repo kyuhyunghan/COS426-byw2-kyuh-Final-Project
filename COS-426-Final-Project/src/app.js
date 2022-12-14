@@ -9,6 +9,7 @@
 import { WebGLRenderer, PerspectiveCamera, Vector3, Clock, Audio, AudioLoader, AudioListener, Box3 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { SeedScene } from 'scenes';
+const Perlin = require('./perlin.js').Perlin;
 
 // Initialize core ThreeJS components
 const scene = new SeedScene();
@@ -49,6 +50,30 @@ let speed = 100; //units a second
 const GRAVITY = 1500;
 let freeze = false;
 let playCollisionSound = true;
+
+var perlin = new Perlin();
+var peak = 60;
+var smoothing = 300;
+function refreshVertices(terrain) {
+    var vertices = terrain.geometry.attributes.position.array;
+    for (var i = 0; i <= vertices.length; i += 3) {
+        vertices[i+2] = peak * perlin.noise(
+            (terrain.position.x + vertices[i])/smoothing, 
+            (terrain.position.z + vertices[i+1])/smoothing
+        );
+    }
+    terrain.geometry.attributes.position.needsUpdate = true;
+    terrain.geometry.computeVertexNormals();
+}
+
+var clockForTerrain = new Clock();
+var movementSpeed = 60;
+function update(terrain) {
+    var delta = clockForTerrain.getDelta();
+    terrain.position.z += movementSpeed * delta;
+    // camera.position.z += movementSpeed * delta;
+    refreshVertices(terrain);
+}
 
 // source: https://jsfiddle.net/prisoner849/hg90shov/
 const moveRoadLine = (speed, direction) => {   
@@ -161,7 +186,7 @@ audioLoader.load(sounds['ambulance'], function(buffer){
 // Render loop
 const onAnimationFrameHandler = (timeStamp) => {
     controls.update();
-
+    update(scene.children[3]);
     moveRoadLine(speed, direction);
     if(!freeze) speed += 1/20; // speed gets progressively quicker
     for(let i = 1; i <= 12; i++){

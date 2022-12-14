@@ -50,30 +50,32 @@ let speed = 100; //units a second
 const GRAVITY = 1500;
 let freeze = false;
 let playCollisionSound = true;
+let segmentsZ = 50;
+let segmentsX = 50;
 
-var perlin = new Perlin();
-var peak = 60;
-var smoothing = 300;
-function refreshVertices(terrain) {
-    var vertices = terrain.geometry.attributes.position.array;
-    for (var i = 0; i <= vertices.length; i += 3) {
-        vertices[i+2] = peak * perlin.noise(
-            (terrain.position.x + vertices[i])/smoothing, 
-            (terrain.position.z + vertices[i+1])/smoothing
-        );
-    }
-    terrain.geometry.attributes.position.needsUpdate = true;
-    terrain.geometry.computeVertexNormals();
-}
+// var perlin = new Perlin();
+// var peak = 60;
+// var smoothing = 300;
+// function refreshVertices(terrain) {
+//     var vertices = terrain.geometry.attributes.position.array;
+//     for (var i = 0; i <= vertices.length; i += 3) {
+//         vertices[i+2] = peak * perlin.noise(
+//             (terrain.position.x + vertices[i])/smoothing, 
+//             (terrain.position.z + vertices[i+1])/smoothing
+//         );
+//     }
+//     terrain.geometry.attributes.position.needsUpdate = true;
+//     terrain.geometry.computeVertexNormals();
+// }
 
-var clockForTerrain = new Clock();
-var movementSpeed = 60;
-function update(terrain) {
-    var delta = clockForTerrain.getDelta();
-    terrain.position.z += movementSpeed * delta;
-    // camera.position.z += movementSpeed * delta;
-    refreshVertices(terrain);
-}
+// var clockForTerrain = new Clock();
+// var movementSpeed = 60;
+// function update(terrain) {
+//     var delta = clockForTerrain.getDelta();
+//     terrain.position.z += movementSpeed * delta;
+//     // camera.position.z += movementSpeed * delta;
+//     refreshVertices(terrain);
+// }
 
 // source: https://jsfiddle.net/prisoner849/hg90shov/
 const moveRoadLine = (speed, direction) => {   
@@ -186,7 +188,9 @@ audioLoader.load(sounds['ambulance'], function(buffer){
 // Render loop
 const onAnimationFrameHandler = (timeStamp) => {
     controls.update();
-    update(scene.children[3]);
+
+
+    // update(scene.children[3]);
     moveRoadLine(speed, direction);
     if(!freeze) speed += 0.25; // speed gets progressively quicker
     for(let i = 1; i <= 12; i++){
@@ -239,6 +243,7 @@ const handleMoveAmbulance = (event) => {
     if (event.code === "ArrowLeft" && ambulance.position.x <= 0) {
         ambulance.position.x += 2.8;
         whooshSound.play();
+        console.log(scene.getObjectByName('leftGround').geometry.attributes.position)
     }
     // right arrow key
     if (event.code === "ArrowRight" && ambulance.position.x >= 0) {

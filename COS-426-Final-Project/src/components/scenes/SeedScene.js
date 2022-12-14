@@ -1,20 +1,31 @@
 import * as Dat from 'dat.gui';
-import { Scene, Color, MeshStandardMaterial, Mesh, PlaneGeometry, PlaneBufferGeometry, MeshLambertMaterial, Fog, Vector3 } from 'three';
+import { Scene, Color, MeshStandardMaterial, Mesh, PlaneGeometry, MeshLambertMaterial, Fog } from 'three';
 import { Flower, Land } from 'objects';
 import { Car, Ambulance, Road, Lines } from 'objects';
 import { BasicLights } from 'lights';
 
 // adapted from A5 code
-const buildGround = function () {
+const buildGround = function (name, x, segmentsX, segmentsZ) {
     let groundMaterial = new MeshStandardMaterial({
         color: 0x808076
+        // wireframe: true
     });
     // plane on the ground
-    let groundGeometry = new PlaneGeometry(10000, 10000);
+    let groundGeometry = new PlaneGeometry(1000, 1000, segmentsX, segmentsZ);
+    for(let z = 0; z < segmentsZ + 1; z++) {
+        for(let x = 0; x < segmentsX + 1; x++) {
+            const index = 3 * (z * segmentsX + x);
+            groundGeometry.attributes.position.array[index + 2] = (Math.random() * 5) - 5;
+        }
+    }
+    groundGeometry.attributes.position.needsUpdate = true;
+    groundGeometry.computeVertexNormals();
     let mesh = new Mesh(groundGeometry, groundMaterial);
-    mesh.position.y = -1;
-    mesh.rotation.x = -Math.PI / 2;
     mesh.receiveShadow = true;
+    mesh.name = name;
+    mesh.position.y = -1;
+    mesh.position.x = x;
+    mesh.rotation.x = -Math.PI / 2;
     return mesh
 }
 
@@ -80,7 +91,8 @@ class SeedScene extends Scene {
             const name = 'car' + i
             cars.push(new Car(name, xCoord, zCoord))
         }
-        const ground = buildGround();
+        const leftGround = buildGround('leftGround', 504, 200, 200);
+        const rightGround = buildGround('rightGround', -504, 200, 200);
         const terrain = buildTerrain();
 
 
@@ -88,7 +100,7 @@ class SeedScene extends Scene {
         const road = new Road();
         const leadingLines = new Lines("leadingLines", [150, 125, 100, 75, 50, 25]);
         const laggingLines = new Lines("laggingLines", [300, 275, 250, 225, 200, 175]);
-        this.add(lights, ambulance, ground, terrain, road, leadingLines, laggingLines);
+        this.add(lights, ambulance, leftGround, rightGround, terrain, road, leadingLines, laggingLines);
         this.add(...cars)
 
         this.fog = new Fog(0x7ec0ee, 125, 150)

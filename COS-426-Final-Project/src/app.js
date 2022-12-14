@@ -118,7 +118,7 @@ const moveCarInAir = () => {
     ambulance.position.y += ambulance.state.velocity_y / 500;
     // change velocity
     ambulance.state.velocity_y -= GRAVITY / 2000 * ambulance.state.accelerationFactor;
-    ambulance.state.accelerationFactor *= 1.1;
+    ambulance.state.accelerationFactor *= 1.25;
     // reset if ambulance position is equal to or below ground
     if(ambulance.position.y <= -0.65){
         ambulance.position.y = -0.65;
@@ -188,7 +188,7 @@ const onAnimationFrameHandler = (timeStamp) => {
     controls.update();
     update(scene.children[3]);
     moveRoadLine(speed, direction);
-    if(!freeze) speed += 1/20; // speed gets progressively quicker
+    if(!freeze) speed += 0.25; // speed gets progressively quicker
     for(let i = 1; i <= 12; i++){
         const name = "car" + i;
         if(!freeze) moveCar(name, direction);
@@ -200,11 +200,12 @@ const onAnimationFrameHandler = (timeStamp) => {
     if(!scene.getObjectByName('ambulance').state.onGround){
         if(!freeze) moveCarInAir()
     }
-    for(let i = 1; i <= 12; i++){
+    const ambulance = scene.getObjectByName('ambulance');
+    for(let i = 1; i <= 18; i++){
         let name = "car" + i;
         // console.log(name)
         let car = scene.getObjectByName(name);
-        if (detectCollisions(car)) {
+        if (detectCollisions(car, ambulance)) {
             speed = 0
             freeze = true
             backgroundSound.stop();
@@ -256,22 +257,22 @@ const handleMoveAmbulance = (event) => {
     }
 }
 
-const detectCollisions = (car) => {
-    const ambulance = scene.getObjectByName('ambulance');
-    var bboxAmbulance = new Box3().setFromObject(ambulance);
-    
-    const bboxCar = new Box3().setFromObject(car);
+const detectCollisions = (car1, car2) => {
+    // const ambulance = scene.getObjectByName('ambulance');
+    // var bboxAmbulance = new Box3().setFromObject(ambulance);
+    const bboxCar1 = new Box3().setFromObject(car1);
+    const bboxCar2 = new Box3().setFromObject(car2);
     // if car not in same lane ignore
-    if (ambulance.position.x != car.position.x) {
+    if (car1.position.x != car2.position.x) {
         return false;
     }
     // collision from front
-    if ((bboxCar.min.z <= bboxAmbulance.max.z) && (bboxCar.min.z >= bboxAmbulance.min.z) && (bboxAmbulance.min.y <= bboxCar.max.y)) {
+    if ((bboxCar1.min.z <= bboxCar2.max.z) && (bboxCar1.min.z >= bboxCar2.min.z) && (bboxCar2.min.y <= bboxCar1.max.y)) {
         return true;
     }
 
     // collision from back
-    if ((bboxCar.max.z <= bboxAmbulance.max.z) && (bboxCar.max.z >= bboxAmbulance.min.z) && (bboxAmbulance.min.y <= bboxCar.max.y)) {
+    if ((bboxCar1.max.z <= bboxCar2.max.z) && (bboxCar1.max.z >= bboxCar2.min.z) && (bboxCar2.min.y <= bboxCar1.max.y)) {
         return true;
     }
 

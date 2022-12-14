@@ -44,7 +44,9 @@ class SeedScene extends Scene {
         if (i <= 3) return this.getRandomInt(100, 200)
         if (i <= 6) return this.getRandomInt(150, 250)
         if (i <= 9) return this.getRandomInt(200, 300)
-        if (i <= 12) return this.getRandomInt(250, 300)
+        if (i <= 12) return this.getRandomInt(250, 350)
+        if (i <= 15) return this.getRandomInt(300, 400)
+        if (i <= 18) return this.getRandomInt(350, 450)
     }
 
 
@@ -70,7 +72,7 @@ class SeedScene extends Scene {
         const ambulance = new Ambulance();
         ambulance.position.y = -0.65;
         const cars = [];
-        for (let i = 1; i <= 12; i++) {
+        for (let i = 1; i <= 18; i++) {
             const xCoord = this.chooseXCoord(i)
             const zCoord = this.chooseInitialZ(i)
             // used for ensuring that new cars are spawned correctly

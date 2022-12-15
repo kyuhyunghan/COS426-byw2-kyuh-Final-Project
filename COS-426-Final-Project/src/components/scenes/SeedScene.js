@@ -1,23 +1,28 @@
 import * as Dat from 'dat.gui';
-import { Scene, Color, MeshStandardMaterial, Mesh, PlaneGeometry, MeshLambertMaterial, Fog } from 'three';
+import { Scene, Color, MeshStandardMaterial, Mesh, PlaneGeometry, MeshLambertMaterial, Fog, TextureLoader } from 'three';
 import { Flower, Land } from 'objects';
 import { Car, Ambulance, Road, Lines } from 'objects';
 import { BasicLights } from 'lights';
 const Perlin = require('../../perlin.js').Perlin;
 
 // adapted from A5 code
-const buildGround = function (name, x, segmentsX, segmentsZ) {
+const buildGround = function (name, x, y, segmentsX, segmentsZ, color, texture_image) {
     let groundMaterial = new MeshStandardMaterial({
-        color: 0x808076
+        color: color
         // wireframe: true
     });
+    // image source: https://img.besthqwallpapers.com/Uploads/19-3-2020/125338/water-background-waves-ocean-water-texture-ocean-aero-view.jpg
+    if(texture_image !== undefined){
+        const loader = new TextureLoader();
+        groundMaterial.map = loader.load(texture_image)
+    }
     // plane on the ground
     let groundGeometry = new PlaneGeometry(1000, 1000, segmentsX, segmentsZ);
     
     let mesh = new Mesh(groundGeometry, groundMaterial);
     mesh.receiveShadow = true;
     mesh.name = name;
-    mesh.position.y = -1;
+    mesh.position.y = y;
     mesh.position.x = x;
     mesh.rotation.x = -Math.PI / 2;
     return mesh
@@ -85,8 +90,10 @@ class SeedScene extends Scene {
             const name = 'car' + i
             cars.push(new Car(name, xCoord, zCoord))
         }
-        const leftGround = buildGround('leftGround', 504, 200, 200);
-        const rightGround = buildGround('rightGround', -504, 200, 200);
+        const leftGround = buildGround('leftGround', 504, -1, 200, 200, 0xADD8E6, undefined);
+        const rightGround = buildGround('rightGround', -504, -1, 200, 200, 0xADD8E6, undefined);
+        const waterTexture = 'https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/COS-426-Final-Project/src/components/scenes/ocean.png'
+        const water = buildGround('water', 0, -2.75, 200, 200, 0x0B0B45, waterTexture);
         const terrain = buildTerrain();
 
 
@@ -94,7 +101,7 @@ class SeedScene extends Scene {
         const road = new Road();
         const leadingLines = new Lines("leadingLines", [150, 125, 100, 75, 50, 25]);
         const laggingLines = new Lines("laggingLines", [300, 275, 250, 225, 200, 175]);
-        this.add(lights, ambulance, leftGround, rightGround, terrain, road, leadingLines, laggingLines);
+        this.add(lights, ambulance, leftGround, rightGround, water, terrain, road, leadingLines, laggingLines);
         this.add(...cars)
 
         this.fog = new Fog(0x7ec0ee, 125, 150)

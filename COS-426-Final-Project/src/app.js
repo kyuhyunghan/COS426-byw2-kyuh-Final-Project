@@ -50,8 +50,8 @@ let speed = 100; //units a second
 const GRAVITY = 1500;
 let freeze = false;
 let playCollisionSound = true;
-let segmentsZ = 50;
-let segmentsX = 50;
+let segmentsZ = 200;
+let segmentsX = 200;
 let flying = 0;
 var perlin = new Perlin();
 
@@ -95,19 +95,42 @@ const moveRoadLine = (speed, direction) => {
 }
 
 const updateGround = (ground, flying) => {
+    // console.log('calling update ground')
     let groundGeometry = ground.geometry;
     let zOff = flying;
-    let peak = 10;
-    let smoothing = 20;
+    // let peak = 10;
+    // let smoothing = 20;
     for (let z = 0; z < segmentsZ + 1; z++) {
         let xOff = 0;
         for (let x = 0; x < segmentsX + 1; x++) {
             const index = 3 * (z * segmentsX + x);
-            groundGeometry.attributes.position.array[index + 2] = (200 * perlin.noise(xOff, zOff)) - 100;
-            xOff += 0.2;
-            console.log(groundGeometry.attributes.position);
+            groundGeometry.attributes.position.array[index + 2] = (Math.min(0, perlin.noise(xOff, zOff)) * 100) - 1;
+            // groundGeometry.attributes.position.array[index + 2] = Math.random() * 5 - 5;
+            xOff += 0.1;
+            // console.log(groundGeometry.attributes.position);
         }
-        zOff += 0.2;
+        zOff += 0.1;
+    }
+    groundGeometry.attributes.position.needsUpdate = true;
+    groundGeometry.computeVertexNormals();
+}
+
+const updateWater = (ground, flying) => {
+    // console.log('calling update ground')
+    let groundGeometry = ground.geometry;
+    let zOff = flying;
+    // let peak = 10;
+    // let smoothing = 20;
+    for (let z = 0; z < segmentsZ + 1; z++) {
+        let xOff = 0;
+        for (let x = 0; x < segmentsX + 1; x++) {
+            const index = 3 * (z * segmentsX + x);
+            groundGeometry.attributes.position.array[index + 2] = (Math.min(0, perlin.noise(xOff, zOff)) * 5);
+            // groundGeometry.attributes.position.array[index + 2] = Math.random() * 5 - 5;
+            xOff += 0.25;
+            // console.log(groundGeometry.attributes.position);
+        }
+        zOff += 0.25;
     }
     groundGeometry.attributes.position.needsUpdate = true;
     groundGeometry.computeVertexNormals();
@@ -211,9 +234,13 @@ const onAnimationFrameHandler = (timeStamp) => {
     controls.update();
     const leftGround = scene.getObjectByName('leftGround');
     const rightGround = scene.getObjectByName('rightGround');
-    updateGround(leftGround, flying);
-    updateGround(rightGround, flying);
-    flying -= 0.1;
+    const water = scene.getObjectByName('water');
+    if(!freeze) {
+        updateGround(leftGround, flying);
+        updateGround(rightGround, flying);
+        updateWater(water, flying);
+        flying += 0.1;
+    }
 
     // update(scene.children[3]);
     moveRoadLine(speed, direction);

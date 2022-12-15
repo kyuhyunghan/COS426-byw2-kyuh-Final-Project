@@ -9,10 +9,29 @@
 import { WebGLRenderer, PerspectiveCamera, Vector3, Clock, Audio, AudioLoader, AudioListener, Box3 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { SeedScene } from 'scenes';
+import * as Dat from 'dat.gui';
 const Perlin = require('./perlin.js').Perlin;
 
+// GUI Setup
+// Init state
+const state = {
+    gui: new Dat.GUI(), // Create GUI for scene
+    difficulty: 'Medium',
+    skyColor: 0x1E0E46,
+    fogColor: 0x28125D,
+    floorColor: 0xC61A09,
+    blocksColor: 0x6F6F6F 
+};
+let gamePlay = state.gui.addFolder('Gameplay');
+gamePlay.add(state, 'difficulty', [ 'Easy', 'Medium', 'Hard' ]);
+let colorSettings = state.gui.addFolder('Color');
+colorSettings.addColor(state, 'skyColor')
+colorSettings.addColor(state, 'fogColor')
+colorSettings.addColor(state, 'floorColor')
+colorSettings.addColor(state, 'blocksColor')
+
 // Initialize core ThreeJS components
-const scene = new SeedScene();
+const scene = new SeedScene(state);
 const camera = new PerspectiveCamera();
 const renderer = new WebGLRenderer({ antialias: true });
 const listener = new AudioListener(); // audio listener
@@ -46,7 +65,10 @@ controls.update();
 // global clock, direction, speed
 const clock = new Clock();
 const direction = new Vector3(0, 0, -1);
-let speed = 100; //units a second
+const startingSpeeds = {'Easy': 50, 'Medium': 75, 'Hard': 100}
+const speedIncrements = {'Easy': 0.1, 'Medium': 0.2, 'Hard': 0.25}
+let speed = startingSpeeds[state.difficulty]
+let speedIncrement = speedIncrements[state.difficulty]
 const GRAVITY = 1500;
 let freeze = false;
 let playCollisionSound = true;
@@ -55,30 +77,6 @@ let segmentsX = 200;
 let flying = 0;
 var perlin = new Perlin();
 let framestep = 10;
-
-// var perlin = new Perlin();
-// var peak = 60;
-// var smoothing = 300;
-// function refreshVertices(terrain) {
-//     var vertices = terrain.geometry.attributes.position.array;
-//     for (var i = 0; i <= vertices.length; i += 3) {
-//         vertices[i+2] = peak * perlin.noise(
-//             (terrain.position.x + vertices[i])/smoothing, 
-//             (terrain.position.z + vertices[i+1])/smoothing
-//         );
-//     }
-//     terrain.geometry.attributes.position.needsUpdate = true;
-//     terrain.geometry.computeVertexNormals();
-// }
-
-// var clockForTerrain = new Clock();
-// var movementSpeed = 60;
-// function update(terrain) {
-//     var delta = clockForTerrain.getDelta();
-//     terrain.position.z += movementSpeed * delta;
-//     // camera.position.z += movementSpeed * delta;
-//     refreshVertices(terrain);
-// }
 
 // source: https://jsfiddle.net/prisoner849/hg90shov/
 const moveRoadLine = (speed, direction) => {
@@ -106,9 +104,7 @@ const updateGround = (ground, flying) => {
         for (let x = 0; x < segmentsX + 1; x++) {
             const index = 3 * (z * segmentsX + x);
             groundGeometry.attributes.position.array[index + 2] = (Math.min(0, perlin.noise(xOff, zOff)) * 100) - 1;
-            // groundGeometry.attributes.position.array[index + 2] = Math.random() * 5 - 5;
             xOff += 0.1;
-            // console.log(groundGeometry.attributes.position);
         }
         zOff += 0.1;
     }
@@ -117,19 +113,14 @@ const updateGround = (ground, flying) => {
 }
 
 const updateWater = (ground, flying) => {
-    // console.log('calling update ground')
     let groundGeometry = ground.geometry;
     let zOff = flying;
-    // let peak = 10;
-    // let smoothing = 20;
     for (let z = 0; z < segmentsZ + 1; z++) {
         let xOff = 0;
         for (let x = 0; x < segmentsX + 1; x++) {
             const index = 3 * (z * segmentsX + x);
             groundGeometry.attributes.position.array[index + 2] = (Math.min(0, perlin.noise(xOff, zOff)) * 5);
-            // groundGeometry.attributes.position.array[index + 2] = Math.random() * 5 - 5;
             xOff += 0.25;
-            // console.log(groundGeometry.attributes.position);
         }
         zOff += 0.25;
     }
@@ -144,14 +135,8 @@ function getRandomInt(min, max) {
 
 // source: https://jsfiddle.net/prisoner849/hg90shov/
 const moveCar = (name, direction) => {
-    // const delta = clock.getDelta();
 
     const car = scene.getObjectByName(name);
-
-    // console.log(delta)
-    // car.position.z -= (2.8);
-    // car.position.z = 0;
-
     car.position.add(direction.clone().multiplyScalar(1 * (speed / 175)));
     if (car.position.z < -125) {
         const zOffset = getRandomInt(250, 350);
@@ -235,7 +220,7 @@ const onAnimationFrameHandler = (timeStamp) => {
     controls.update();
     const leftGround = scene.getObjectByName('leftGround');
     const rightGround = scene.getObjectByName('rightGround');
-    const water = scene.getObjectByName('water');
+    const water = scene.getObjectByName('floor');
     if(!freeze && framestep === 10) {
         updateGround(leftGround, flying);
         updateGround(rightGround, flying);
@@ -245,15 +230,13 @@ const onAnimationFrameHandler = (timeStamp) => {
     }
     framestep++
 
-    // update(scene.children[3]);
     moveRoadLine(speed, direction);
-    if (!freeze) speed += 0.25; // speed gets progressively quicker
+    if (!freeze) speed += speedIncrement; // speed gets progressively quicker
     for (let i = 1; i <= 12; i++) {
         const name = "car" + i;
         if (!freeze) moveCar(name, direction);
     }
 
-    // console.log(scene.getObjectByName('car').position.z);
     // always move car if not onGround
     // adapted from https://discourse.threejs.org/t/three-js-simple-jump/40411
     if (!scene.getObjectByName('ambulance').state.onGround) {
@@ -262,7 +245,6 @@ const onAnimationFrameHandler = (timeStamp) => {
     const ambulance = scene.getObjectByName('ambulance');
     for (let i = 1; i <= 18; i++) {
         let name = "car" + i;
-        // console.log(name)
         let car = scene.getObjectByName(name);
         if (detectCollisions(car, ambulance)) {
             speed = 0
@@ -272,7 +254,6 @@ const onAnimationFrameHandler = (timeStamp) => {
             if (playCollisionSound) collisionSound.play();
             playCollisionSound = false
         }
-        // console.log(name + car.position.x)
     }
 
     renderer.render(scene, camera);
@@ -298,7 +279,7 @@ const handleMoveAmbulance = (event) => {
     if (event.code === "ArrowLeft" && ambulance.position.x <= 0) {
         ambulance.position.x += 2.8;
         whooshSound.play();
-        console.log(scene.getObjectByName('leftGround').geometry.attributes.position)
+        console.log(scene.getObjectByName('leftGround'))
     }
     // right arrow key
     if (event.code === "ArrowRight" && ambulance.position.x >= 0) {
@@ -318,8 +299,6 @@ const handleMoveAmbulance = (event) => {
 }
 
 const detectCollisions = (car1, car2) => {
-    // const ambulance = scene.getObjectByName('ambulance');
-    // var bboxAmbulance = new Box3().setFromObject(ambulance);
     const bboxCar1 = new Box3().setFromObject(car1);
     const bboxCar2 = new Box3().setFromObject(car2);
     // if car not in same lane ignore

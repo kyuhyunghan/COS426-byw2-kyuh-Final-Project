@@ -1,4 +1,3 @@
-import * as Dat from 'dat.gui';
 import { Scene, Color, MeshStandardMaterial, Mesh, PlaneGeometry, MeshLambertMaterial, Fog, TextureLoader } from 'three';
 import { Flower, Land } from 'objects';
 import { Car, Ambulance, Road, Lines } from 'objects';
@@ -9,8 +8,8 @@ const Perlin = require('../../perlin.js').Perlin;
 const buildGround = function (name, x, y, segmentsX, segmentsZ, color, texture_image) {
     let groundMaterial = new MeshStandardMaterial({
         color: color
-        // wireframe: true
     });
+    
     // image source: https://img.besthqwallpapers.com/Uploads/19-3-2020/125338/water-background-waves-ocean-water-texture-ocean-aero-view.jpg
     if(texture_image !== undefined){
         const loader = new TextureLoader();
@@ -22,19 +21,10 @@ const buildGround = function (name, x, y, segmentsX, segmentsZ, color, texture_i
     let mesh = new Mesh(groundGeometry, groundMaterial);
     mesh.receiveShadow = true;
     mesh.name = name;
-    mesh.position.y = y;
     mesh.position.x = x;
+    mesh.position.y = y;
     mesh.rotation.x = -Math.PI / 2;
     return mesh
-}
-
-const buildTerrain = function () {
-    var geometry = new PlaneGeometry(2000, 2000, 256, 256);
-    var material = new MeshLambertMaterial({ color: 0x000000 });
-    var terrain = new Mesh(geometry, material);
-    terrain.rotation.x = -Math.PI / 2;
-    terrain.position.y = -5;
-    return terrain;
 }
 
 class SeedScene extends Scene {
@@ -60,20 +50,13 @@ class SeedScene extends Scene {
     }
 
 
-    constructor() {
+    constructor(state) {
+        
         // Call parent Scene() constructor
         super();
-
-        // Init state
-        this.state = {
-            gui: new Dat.GUI(), // Create GUI for scene
-            rotationSpeed: 1,
-            updateList: [],
-        };
-
+        this.state = state
         // Set background to a nice color
-        // this.background = new Color(0x7ec0ee);
-        this.background = new Color(0x1E0E46);
+        this.background = new Color(state.skyColor);
 
         // Add meshes to scene
         // const land = new Land();
@@ -90,38 +73,34 @@ class SeedScene extends Scene {
             const name = 'car' + i
             cars.push(new Car(name, xCoord, zCoord))
         }
-        const leftGround = buildGround('leftGround', 504, -1, 200, 200, 0x6F6F6F, undefined);
-        const rightGround = buildGround('rightGround', -504, -1, 200, 200, 0x6F6F6F, undefined);
-        const waterTexture = 'https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/COS-426-Final-Project/src/components/scenes/ocean.png'
-        const water = buildGround('water', 0, -2.75, 200, 200, 0xC61A09, waterTexture);
-        const terrain = buildTerrain();
+        const leftGround = buildGround('leftGround', 504, -1, 200, 200, state.blocksColor, undefined);
+        const rightGround = buildGround('rightGround', -504, -1, 200, 200, state.blocksColor, undefined);
+        const floorTexture = 'https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/COS-426-Final-Project/src/components/scenes/ocean.png'
+        const floor = buildGround('floor', 0, -2.75, 200, 200, state.floorColor, floorTexture);
+        // const terrain = buildTerrain();
 
 
 
         const road = new Road();
         const leadingLines = new Lines("leadingLines", [150, 125, 100, 75, 50, 25]);
         const laggingLines = new Lines("laggingLines", [300, 275, 250, 225, 200, 175]);
-        this.add(lights, ambulance, leftGround, rightGround, water, terrain, road, leadingLines, laggingLines);
+        this.add(lights, ambulance, leftGround, rightGround, floor, road, leadingLines, laggingLines);
         this.add(...cars)
 
-        this.fog = new Fog(0x28125D, 100, 500)
-        // Populate GUI
-        // this.state.gui.add(this.state, 'rotationSpeed', -5, 5);
+        this.fog = new Fog(state.fogColor, 100, 500)
     }
 
     // addToUpdateList(object) {
     //     this.state.updateList.push(object);
     // }
 
-    // update(timeStamp) {
-    //     const { rotationSpeed, updateList } = this.state;
-    //     this.rotation.y = (rotationSpeed * timeStamp) / 10000;
-
-    //     // Call update for each object in the updateList
-    //     for (const obj of updateList) {
-    //         obj.update(timeStamp);
-    //     }
-    // }
+    update() {
+        this.background = new Color(this.state.skyColor);
+        this.fog = new Fog(this.state.fogColor, 100, 500);
+        this.getObjectByName('leftGround').material.color.setHex(this.state.blocksColor);
+        this.getObjectByName('rightGround').material.color.setHex(this.state.blocksColor);
+        this.getObjectByName('floor').material.color.setHex(this.state.floorColor);
+    }
 }
 
 export default SeedScene;

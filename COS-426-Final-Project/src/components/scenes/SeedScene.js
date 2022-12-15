@@ -103,7 +103,7 @@ class SeedScene extends Scene {
         fontLoader.load(
             'https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/COS-426-Final-Project/src/components/fonts/font.json',
             (droidFont) => {
-                const textGeometry = new TextGeometry('Score', {
+                const textGeometry = new TextGeometry('Score:1234567890', {
                     size: 20,
                     height: 4,
                     font: droidFont,
@@ -111,8 +111,8 @@ class SeedScene extends Scene {
                 const textMaterial = new MeshStandardMaterial({ color: 0xffffff });
                 const textMesh = new Mesh(textGeometry, textMaterial);
                 textMesh.rotation.y = -Math.PI;
-                textMesh.position.x = 10;
-                textMesh.position.y = 10;
+                textMesh.position.x = 250;
+                textMesh.position.y = 50;
                 textMesh.position.z = 500;
                 this.add(textMesh);
             }

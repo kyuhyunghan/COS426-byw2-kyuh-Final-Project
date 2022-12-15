@@ -54,6 +54,7 @@ let segmentsZ = 200;
 let segmentsX = 200;
 let flying = 0;
 var perlin = new Perlin();
+let framestep = 10;
 
 // var perlin = new Perlin();
 // var peak = 60;
@@ -235,12 +236,14 @@ const onAnimationFrameHandler = (timeStamp) => {
     const leftGround = scene.getObjectByName('leftGround');
     const rightGround = scene.getObjectByName('rightGround');
     const water = scene.getObjectByName('water');
-    if(!freeze) {
+    if(!freeze && framestep === 10) {
         updateGround(leftGround, flying);
         updateGround(rightGround, flying);
         updateWater(water, flying);
         flying += 0.1;
+        framestep = 0;
     }
+    framestep++
 
     // update(scene.children[3]);
     moveRoadLine(speed, direction);

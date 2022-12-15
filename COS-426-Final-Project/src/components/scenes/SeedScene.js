@@ -73,7 +73,7 @@ class SeedScene extends Scene {
 
         // Set background to a nice color
         // this.background = new Color(0x7ec0ee);
-        this.background = new Color(0x7ec0ee);
+        this.background = new Color(0x1E0E46);
 
         // Add meshes to scene
         // const land = new Land();
@@ -90,10 +90,10 @@ class SeedScene extends Scene {
             const name = 'car' + i
             cars.push(new Car(name, xCoord, zCoord))
         }
-        const leftGround = buildGround('leftGround', 504, -1, 200, 200, 0xADD8E6, undefined);
-        const rightGround = buildGround('rightGround', -504, -1, 200, 200, 0xADD8E6, undefined);
+        const leftGround = buildGround('leftGround', 504, -1, 200, 200, 0x6F6F6F, undefined);
+        const rightGround = buildGround('rightGround', -504, -1, 200, 200, 0x6F6F6F, undefined);
         const waterTexture = 'https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/COS-426-Final-Project/src/components/scenes/ocean.png'
-        const water = buildGround('water', 0, -2.75, 200, 200, 0x0B0B45, waterTexture);
+        const water = buildGround('water', 0, -2.75, 200, 200, 0xC61A09, waterTexture);
         const terrain = buildTerrain();
 
 
@@ -104,7 +104,7 @@ class SeedScene extends Scene {
         this.add(lights, ambulance, leftGround, rightGround, water, terrain, road, leadingLines, laggingLines);
         this.add(...cars)
 
-        this.fog = new Fog(0x7ec0ee, 125, 150)
+        this.fog = new Fog(0x28125D, 100, 500)
         // Populate GUI
         // this.state.gui.add(this.state, 'rotationSpeed', -5, 5);
     }

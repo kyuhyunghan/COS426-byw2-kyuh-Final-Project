@@ -16,7 +16,7 @@ const scene = new SeedScene();
 const camera = new PerspectiveCamera();
 const renderer = new WebGLRenderer({ antialias: true });
 const listener = new AudioListener(); // audio listener
-camera.add( listener );
+camera.add(listener);
 const audioLoader = new AudioLoader();
 
 
@@ -52,6 +52,8 @@ let freeze = false;
 let playCollisionSound = true;
 let segmentsZ = 50;
 let segmentsX = 50;
+let flying = 0;
+var perlin = new Perlin();
 
 // var perlin = new Perlin();
 // var peak = 60;
@@ -78,29 +80,48 @@ let segmentsX = 50;
 // }
 
 // source: https://jsfiddle.net/prisoner849/hg90shov/
-const moveRoadLine = (speed, direction) => {   
+const moveRoadLine = (speed, direction) => {
     const delta = clock.getDelta();
     const leadingLines = scene.getObjectByName('leadingLines');
     const laggingLines = scene.getObjectByName('laggingLines');
     leadingLines.position.add(direction.clone().multiplyScalar(speed * delta));
     laggingLines.position.add(direction.clone().multiplyScalar(speed * delta));
-    if(leadingLines.position.z < -200) {
+    if (leadingLines.position.z < -200) {
         leadingLines.position.z += 150;
     }
-    if(laggingLines.position.z < -200) {
+    if (laggingLines.position.z < -200) {
         laggingLines.position.z += 150;
     }
 }
 
+const updateGround = (ground, flying) => {
+    let groundGeometry = ground.geometry;
+    let zOff = flying;
+    let peak = 10;
+    let smoothing = 20;
+    for (let z = 0; z < segmentsZ + 1; z++) {
+        let xOff = 0;
+        for (let x = 0; x < segmentsX + 1; x++) {
+            const index = 3 * (z * segmentsX + x);
+            groundGeometry.attributes.position.array[index + 2] = (200 * perlin.noise(xOff, zOff)) - 100;
+            xOff += 0.2;
+            console.log(groundGeometry.attributes.position);
+        }
+        zOff += 0.2;
+    }
+    groundGeometry.attributes.position.needsUpdate = true;
+    groundGeometry.computeVertexNormals();
+}
+
 // copied from https://stackoverflow.com/questions/18921134/math-random-numbers-between-50-and-80
-function getRandomInt (min, max) {
+function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 // source: https://jsfiddle.net/prisoner849/hg90shov/
-const moveCar = (name, direction) => {   
+const moveCar = (name, direction) => {
     // const delta = clock.getDelta();
-    
+
     const car = scene.getObjectByName(name);
 
     // console.log(delta)
@@ -108,7 +129,7 @@ const moveCar = (name, direction) => {
     // car.position.z = 0;
 
     car.position.add(direction.clone().multiplyScalar(1 * (speed / 175)));
-    if(car.position.z < -125) {
+    if (car.position.z < -125) {
         const zOffset = getRandomInt(250, 350);
         car.position.z += zOffset;
     }
@@ -122,7 +143,7 @@ const moveCarInAir = () => {
     ambulance.state.velocity_y -= GRAVITY / 2000 * ambulance.state.accelerationFactor;
     ambulance.state.accelerationFactor *= 1.25;
     // reset if ambulance position is equal to or below ground
-    if(ambulance.position.y <= -0.65){
+    if (ambulance.position.y <= -0.65) {
         ambulance.position.y = -0.65;
         // set velocity back to 0
         ambulance.state.velocity_y = 0;
@@ -148,39 +169,39 @@ const sounds = {
 }
 
 const jumpSound = new Audio(listener);
-audioLoader.load(sounds['jump'], function(buffer){
-    jumpSound.setBuffer( buffer );
-	jumpSound.setLoop( false );
-	jumpSound.setVolume( 1 );
+audioLoader.load(sounds['jump'], function (buffer) {
+    jumpSound.setBuffer(buffer);
+    jumpSound.setLoop(false);
+    jumpSound.setVolume(1);
 });
 
 const whooshSound = new Audio(listener);
-audioLoader.load(sounds['whoosh'], function(buffer){
-    whooshSound.setBuffer( buffer );
-	whooshSound.setLoop( false );
-	whooshSound.setVolume( 1 );
+audioLoader.load(sounds['whoosh'], function (buffer) {
+    whooshSound.setBuffer(buffer);
+    whooshSound.setLoop(false);
+    whooshSound.setVolume(1);
 });
 
 const collisionSound = new Audio(listener);
-audioLoader.load(sounds['collision'], function(buffer){
-    collisionSound.setBuffer( buffer );
-	collisionSound.setLoop( false );
-	collisionSound.setVolume( 0.8 );
+audioLoader.load(sounds['collision'], function (buffer) {
+    collisionSound.setBuffer(buffer);
+    collisionSound.setLoop(false);
+    collisionSound.setVolume(0.8);
 });
 
 const backgroundSound = new Audio(listener);
-audioLoader.load(sounds['background2'], function(buffer){
-    backgroundSound.setBuffer( buffer );
-	backgroundSound.setLoop( true );
-	backgroundSound.setVolume( 0.4 );
+audioLoader.load(sounds['background2'], function (buffer) {
+    backgroundSound.setBuffer(buffer);
+    backgroundSound.setLoop(true);
+    backgroundSound.setVolume(0.4);
     backgroundSound.play()
 });
 
 const ambulanceSound = new Audio(listener);
-audioLoader.load(sounds['ambulance'], function(buffer){
-    ambulanceSound.setBuffer( buffer );
-	ambulanceSound.setLoop( true );
-	ambulanceSound.setVolume( 0.4 );
+audioLoader.load(sounds['ambulance'], function (buffer) {
+    ambulanceSound.setBuffer(buffer);
+    ambulanceSound.setLoop(true);
+    ambulanceSound.setVolume(0.4);
     ambulanceSound.play()
 });
 
@@ -188,24 +209,28 @@ audioLoader.load(sounds['ambulance'], function(buffer){
 // Render loop
 const onAnimationFrameHandler = (timeStamp) => {
     controls.update();
-
+    const leftGround = scene.getObjectByName('leftGround');
+    const rightGround = scene.getObjectByName('rightGround');
+    updateGround(leftGround, flying);
+    updateGround(rightGround, flying);
+    flying -= 0.1;
 
     // update(scene.children[3]);
     moveRoadLine(speed, direction);
-    if(!freeze) speed += 0.25; // speed gets progressively quicker
-    for(let i = 1; i <= 12; i++){
+    if (!freeze) speed += 0.25; // speed gets progressively quicker
+    for (let i = 1; i <= 12; i++) {
         const name = "car" + i;
-        if(!freeze) moveCar(name, direction);
+        if (!freeze) moveCar(name, direction);
     }
 
     // console.log(scene.getObjectByName('car').position.z);
     // always move car if not onGround
     // adapted from https://discourse.threejs.org/t/three-js-simple-jump/40411
-    if(!scene.getObjectByName('ambulance').state.onGround){
-        if(!freeze) moveCarInAir()
+    if (!scene.getObjectByName('ambulance').state.onGround) {
+        if (!freeze) moveCarInAir()
     }
     const ambulance = scene.getObjectByName('ambulance');
-    for(let i = 1; i <= 18; i++){
+    for (let i = 1; i <= 18; i++) {
         let name = "car" + i;
         // console.log(name)
         let car = scene.getObjectByName(name);
@@ -214,9 +239,9 @@ const onAnimationFrameHandler = (timeStamp) => {
             freeze = true
             backgroundSound.stop();
             ambulanceSound.stop();
-            if(playCollisionSound) collisionSound.play();
+            if (playCollisionSound) collisionSound.play();
             playCollisionSound = false
-        } 
+        }
         // console.log(name + car.position.x)
     }
 
@@ -253,7 +278,7 @@ const handleMoveAmbulance = (event) => {
 
     // space logic
     // adapted from https://discourse.threejs.org/t/three-js-simple-jump/40411
-    if(event.code === "Space" && ambulance.position.y <= 1.3) {
+    if (event.code === "Space" && ambulance.position.y <= 1.3) {
         // increase velocity 
         ambulance.state.velocity_y = 50;
         // set onGround to false
@@ -283,8 +308,8 @@ const detectCollisions = (car1, car2) => {
 
     // not collision otherwise
     return false;
- }
- 
+}
+
 
 windowResizeHandler();
 window.addEventListener('resize', windowResizeHandler, false);

@@ -3,6 +3,7 @@ import { Scene, Color, MeshStandardMaterial, Mesh, PlaneGeometry, MeshLambertMat
 import { Flower, Land } from 'objects';
 import { Car, Ambulance, Road, Lines } from 'objects';
 import { BasicLights } from 'lights';
+const Perlin = require('../../perlin.js').Perlin;
 
 // adapted from A5 code
 const buildGround = function (name, x, segmentsX, segmentsZ) {
@@ -12,14 +13,7 @@ const buildGround = function (name, x, segmentsX, segmentsZ) {
     });
     // plane on the ground
     let groundGeometry = new PlaneGeometry(1000, 1000, segmentsX, segmentsZ);
-    for(let z = 0; z < segmentsZ + 1; z++) {
-        for(let x = 0; x < segmentsX + 1; x++) {
-            const index = 3 * (z * segmentsX + x);
-            groundGeometry.attributes.position.array[index + 2] = (Math.random() * 5) - 5;
-        }
-    }
-    groundGeometry.attributes.position.needsUpdate = true;
-    groundGeometry.computeVertexNormals();
+    
     let mesh = new Mesh(groundGeometry, groundMaterial);
     mesh.receiveShadow = true;
     mesh.name = name;

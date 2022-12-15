@@ -1,9 +1,12 @@
 import * as Dat from 'dat.gui';
-import { Scene, Color, MeshStandardMaterial, Mesh, PlaneGeometry, MeshLambertMaterial, Fog, TextureLoader } from 'three';
+import { Scene, Color, MeshStandardMaterial, Mesh, PlaneGeometry, MeshLambertMaterial, Fog, TextureLoader, font } from 'three';
 import { Flower, Land } from 'objects';
 import { Car, Ambulance, Road, Lines } from 'objects';
 import { BasicLights } from 'lights';
 const Perlin = require('../../perlin.js').Perlin;
+import { TTFLoader } from 'three/examples/jsm/loaders/TTFLoader';
+import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
+import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
 
 // adapted from A5 code
 const buildGround = function (name, x, y, segmentsX, segmentsZ, color, texture_image) {
@@ -12,13 +15,13 @@ const buildGround = function (name, x, y, segmentsX, segmentsZ, color, texture_i
         // wireframe: true
     });
     // image source: https://img.besthqwallpapers.com/Uploads/19-3-2020/125338/water-background-waves-ocean-water-texture-ocean-aero-view.jpg
-    if(texture_image !== undefined){
+    if (texture_image !== undefined) {
         const loader = new TextureLoader();
         groundMaterial.map = loader.load(texture_image)
     }
     // plane on the ground
     let groundGeometry = new PlaneGeometry(1000, 1000, segmentsX, segmentsZ);
-    
+
     let mesh = new Mesh(groundGeometry, groundMaterial);
     mesh.receiveShadow = true;
     mesh.name = name;
@@ -96,7 +99,22 @@ class SeedScene extends Scene {
         const water = buildGround('water', 0, -2.75, 200, 200, 0xC61A09, waterTexture);
         const terrain = buildTerrain();
 
-
+        const fontLoader = new FontLoader();
+        fontLoader.load(
+            '../../fonts/font.json',
+            (droidFont) => {
+                const textGeometry = new TextGeometry('three.js', {
+                    size: 20,
+                    height: 4,
+                    font: droidFont,
+                });
+                const textMaterial = new THREE.MeshNormalMaterial();
+                const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+                textMesh.position.x = -45;
+                textMesh.position.y = 0;
+                test.scene.add(textMesh);
+            }
+        );
 
         const road = new Road();
         const leadingLines = new Lines("leadingLines", [150, 125, 100, 75, 50, 25]);

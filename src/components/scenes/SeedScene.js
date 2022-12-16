@@ -59,7 +59,7 @@ class SeedScene extends Scene {
         const rightGround = buildGround('rightGround', -504, -1, 200, 200, state.blocksColor, undefined);
         
         // create floor 
-        const floorTexture = 'https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/COS-426-Final-Project/src/components/scenes/ocean.png'
+        const floorTexture = 'https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/src/components/scenes/ocean.png'
         const floor = buildGround('floor', 0, -2.75, 200, 200, state.floorColor, floorTexture);
 
         // create road and two sets of lines (one leading and one lagging)

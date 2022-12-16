@@ -7,7 +7,7 @@ const buildRoad = function() {
     // Texture image taken from: https://wallpaperaccess.com/full/4951395.jpg 
     let groundMaterial = new MeshStandardMaterial({
         color: 0x0f0f0f,
-        map: loader.load('https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/COS-426-Final-Project/src/components/objects/Road/textures/road_texture.jpg')
+        map: loader.load('https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/src/components/objects/Road/textures/road_texture.jpg')
     });
     // road on the ground
     let groundGeometry = new PlaneGeometry(10, 10000);

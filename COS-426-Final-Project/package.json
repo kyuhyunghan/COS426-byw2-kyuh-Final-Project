@@ -1,13 +1,13 @@
 {
-  "name": "crazy-taxi",
+  "name": "ambulance",
   "repository": "COS426-byw2-kyuh-Final-Project",
   "version": "0.1.0",
-  "title": "Crazy Taxi",
+  "title": "Ambulance",
   "description": "Drive as long as you can without hitting any obstacles. Final project developed for COS426 - Computer Graphics.",
   "keywords": [
     "COS 426",
-    "crazy",
-    "taxi"
+    "lava",
+    "ambulance"
   ],
   "scripts": {
     "start": "webpack-dev-server --mode development --output-public-path \"\"",

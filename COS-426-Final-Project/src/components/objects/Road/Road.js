@@ -1,7 +1,10 @@
+// File for the Road Object
+
 import { Group, Mesh, PlaneGeometry, MeshStandardMaterial, TextureLoader } from 'three';
 
 const buildRoad = function() {
     const loader = new TextureLoader();
+    // Texture image taken from: https://wallpaperaccess.com/full/4951395.jpg 
     let groundMaterial = new MeshStandardMaterial({
         color: 0x0f0f0f,
         map: loader.load('https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/COS-426-Final-Project/src/components/objects/Road/textures/road_texture.jpg')
@@ -16,13 +19,10 @@ const buildRoad = function() {
 }
 
 class Road extends Group {
-    constructor() {
-        // Call parent Group() constructor
+    constructor(name) {
         super();
-        this.name = 'road';
-        
+        this.name = name;
         const road = buildRoad();
-
         this.add(road);
     }
 }

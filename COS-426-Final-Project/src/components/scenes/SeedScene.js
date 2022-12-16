@@ -1,12 +1,7 @@
-import * as Dat from 'dat.gui';
-import { Scene, Color, MeshStandardMaterial, Mesh, PlaneGeometry, MeshLambertMaterial, Fog, TextureLoader, font } from 'three';
-import { Flower, Land } from 'objects';
+import { Scene, Color, MeshStandardMaterial, Mesh, PlaneGeometry, Fog, TextureLoader } from 'three';
 import { Car, Ambulance, Road, Lines } from 'objects';
 import { BasicLights } from 'lights';
-const Perlin = require('../../perlin.js').Perlin;
-import { TTFLoader } from 'three/examples/jsm/loaders/TTFLoader';
-import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
-import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
+import * as utils from "../../js/utils";
 
 // adapted from A5 code
 const buildGround = function (name, x, y, segmentsX, segmentsZ, color, texture_image) {
@@ -31,89 +26,54 @@ const buildGround = function (name, x, y, segmentsX, segmentsZ, color, texture_i
     return mesh
 }
 
+const buildCars = function(numCars) {
+    const cars = [];
+    for (let i = 1; i <= numCars; i++) {
+        const xCoord = utils.chooseXCoord(i)
+        const zCoord = utils.chooseInitialZ(i)
+        const name = 'car' + i
+        cars.push(new Car(name, xCoord, zCoord))
+    }
+    return cars
+}
+
 class SeedScene extends Scene {
-
-    // copied from https://stackoverflow.com/questions/18921134/math-random-numbers-between-50-and-80
-    getRandomInt(min, max) {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-
-    chooseXCoord(i) {
-        if (i % 3 == 1) return 2.8
-        if (i % 3 == 2) return 0
-        if (i % 3 == 0) return -2.8
-    }
-
-    chooseInitialZ(i) {
-        if (i <= 3) return this.getRandomInt(100, 200)
-        if (i <= 6) return this.getRandomInt(150, 250)
-        if (i <= 9) return this.getRandomInt(200, 300)
-        if (i <= 12) return this.getRandomInt(250, 350)
-        if (i <= 15) return this.getRandomInt(300, 400)
-        if (i <= 18) return this.getRandomInt(350, 450)
-    }
-
-
+    // state is a dictionary that contains the GUI parameters
     constructor(state) {
         
-        // Call parent Scene() constructor
         super();
+
         this.state = state
-        // Set background to a nice color
+        // Set background to skyColor from state
         this.background = new Color(state.skyColor);
 
-        // Add meshes to scene
-        // const land = new Land();
-        // const flower = new Flower(this);
+        // Add lights to scene
         const lights = new BasicLights();
-        const ambulance = new Ambulance();
-        ambulance.position.y = -0.65;
-        const cars = [];
-        for (let i = 1; i <= 18; i++) {
-            const xCoord = this.chooseXCoord(i)
-            const zCoord = this.chooseInitialZ(i)
-            // used for ensuring that new cars are spawned correctly
-            // const offset = -zCoord; 
-            const name = 'car' + i
-            cars.push(new Car(name, xCoord, zCoord))
-        }
+
+        // create ambulance and cars
+        const ambulance = new Ambulance('ambulance', -0.65);
+        const cars = buildCars(18);
+
+        // create left and right ground objects
         const leftGround = buildGround('leftGround', 504, -1, 200, 200, state.blocksColor, undefined);
         const rightGround = buildGround('rightGround', -504, -1, 200, 200, state.blocksColor, undefined);
+        
+        // create floor 
         const floorTexture = 'https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/COS-426-Final-Project/src/components/scenes/ocean.png'
         const floor = buildGround('floor', 0, -2.75, 200, 200, state.floorColor, floorTexture);
-        // const terrain = buildTerrain();
 
-        const fontLoader = new FontLoader();
-        fontLoader.load(
-            'https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/COS-426-Final-Project/src/components/fonts/font.json',
-            (droidFont) => {
-                const textGeometry = new TextGeometry('Score:1234567890', {
-                    size: 20,
-                    height: 4,
-                    font: droidFont,
-                });
-                const textMaterial = new MeshStandardMaterial({ color: 0xffffff });
-                const textMesh = new Mesh(textGeometry, textMaterial);
-                textMesh.rotation.y = -Math.PI;
-                textMesh.position.x = 250;
-                textMesh.position.y = 50;
-                textMesh.position.z = 500;
-                this.add(textMesh);
-            }
-        );
-
-        const road = new Road();
+        // create road and two sets of lines (one leading and one lagging)
+        const road = new Road('road');
         const leadingLines = new Lines("leadingLines", [150, 125, 100, 75, 50, 25]);
         const laggingLines = new Lines("laggingLines", [300, 275, 250, 225, 200, 175]);
+
+        // add elements to scene object
         this.add(lights, ambulance, leftGround, rightGround, floor, road, leadingLines, laggingLines);
         this.add(...cars)
 
+        // create fog 
         this.fog = new Fog(state.fogColor, 100, 500)
     }
-
-    // addToUpdateList(object) {
-    //     this.state.updateList.push(object);
-    // }
 
     update() {
         this.background = new Color(this.state.skyColor);

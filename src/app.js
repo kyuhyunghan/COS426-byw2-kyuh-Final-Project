@@ -148,19 +148,19 @@ const moveCarInAir = () => {
 const handleMoveAmbulance = (event) => {
     const ambulance = scene.getObjectByName('ambulance');
     // left arrow key
-    if (event.code === "ArrowLeft" && ambulance.position.x <= 0) {
+    if (event.code === "ArrowLeft" && ambulance.position.x <= 0 && !freeze) {
         ambulance.position.x += 2.8;
         whooshSound.play();
     }
     // right arrow key
-    if (event.code === "ArrowRight" && ambulance.position.x >= 0) {
+    if (event.code === "ArrowRight" && ambulance.position.x >= 0 && !freeze) {
         ambulance.position.x -= 2.8;
         whooshSound.play();
     }
 
     // space logic
     // adapted from https://discourse.threejs.org/t/three-js-simple-jump/40411
-    if (event.code === "Space" && ambulance.position.y <= 2) {
+    if (event.code === "Space" && ambulance.position.y <= 2 && !freeze) {
         // increase velocity 
         ambulance.state.velocity_y = 50;
         // set onGround to false

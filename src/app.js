@@ -10,6 +10,7 @@ import { WebGLRenderer, PerspectiveCamera, Vector3, Clock, AudioLoader, AudioLis
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { SeedScene } from 'scenes';
 import * as setup from "./js/setup"
+import * as utils from "./js/utils"
 
 // Initialize core ThreeJS components
 const state = setup.createGUIState();
@@ -121,7 +122,7 @@ const moveCar = (name, direction) => {
     const car = scene.getObjectByName(name);
     car.position.add(direction.clone().multiplyScalar(1 * (speed / 175)));
     if (car.position.z < -125) {
-        const zOffset = setup.getRandomInt(250, 350);
+        const zOffset = utils.getRandomInt(250, 350);
         car.position.z += zOffset;
     }
 }

@@ -315,15 +315,15 @@
   "buffers": [
     {
       "byteLength": 251464,
-      "uri": "https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/COS-426-Final-Project/src/components/objects/Car/scene.bin"
+      "uri": "https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/src/components/objects/Car/scene.bin"
     }
   ],
   "images": [
     {
-      "uri": "https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/COS-426-Final-Project/src/components/objects/Car/textures/CarTex_1_baseColor.png"
+      "uri": "https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/src/components/objects/Car/textures/CarTex_1_baseColor.png"
     },
     {
-      "uri": "https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/COS-426-Final-Project/src/components/objects/Car/textures/WheelTex_baseColor.png"
+      "uri": "https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/src/components/objects/Car/textures/WheelTex_baseColor.png"
     }
   ],
   "materials": [

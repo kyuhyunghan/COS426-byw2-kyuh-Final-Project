@@ -10,10 +10,10 @@ export function chooseXCoord(i) {
 }
 
 export function chooseInitialZ(i) {
-    if (i <= 3) return this.getRandomInt(100, 200)
-    if (i <= 6) return this.getRandomInt(150, 250)
-    if (i <= 9) return this.getRandomInt(200, 300)
-    if (i <= 12) return this.getRandomInt(250, 350)
-    if (i <= 15) return this.getRandomInt(300, 400)
-    if (i <= 18) return this.getRandomInt(350, 450)
+    if (i <= 3) return getRandomInt(100, 200)
+    if (i <= 6) return getRandomInt(150, 250)
+    if (i <= 9) return getRandomInt(200, 300)
+    if (i <= 12) return getRandomInt(250, 350)
+    if (i <= 15) return getRandomInt(300, 400)
+    if (i <= 18) return getRandomInt(350, 450)
 }

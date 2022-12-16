@@ -60,7 +60,7 @@ let flying = 0;
 var perlin = new Perlin();
 let framestep = 10
 
-// source: https://jsfiddle.net/prisoner849/hg90shov/
+// Infinite glider was adapted from: https://jsfiddle.net/prisoner849/hg90shov/
 const moveRoadLine = (speed, direction) => {
     const delta = clock.getDelta();
     const leadingLines = scene.getObjectByName('leadingLines');
@@ -75,9 +75,11 @@ const moveRoadLine = (speed, direction) => {
     }
 }
 
-
+// Perlin noise for the ground
 const updateGround = (ground, flying) => {
-    // adapted from youtube video and link
+    // changing the heights of the mesh was adapted from:
+    // https://www.youtube.com/watch?v=IKB1hWWedMk 
+    // https://woodenraft.games/blog/generating-terrain-plane-geometry-three-js 
     let groundGeometry = ground.geometry;
     let zOff = flying;
     for (let z = 0; z < segmentsZ + 1; z++) {
@@ -93,8 +95,11 @@ const updateGround = (ground, flying) => {
     groundGeometry.computeVertexNormals();
 }
 
-const updateWater = (ground, flying) => {
-    // adapted from youtube video and link
+// Perlin noise for the floor
+const updateFloor = (ground, flying) => {
+    // changing the heights of the mesh was adapted from:
+    // https://www.youtube.com/watch?v=IKB1hWWedMk 
+    // https://woodenraft.games/blog/generating-terrain-plane-geometry-three-js 
     let groundGeometry = ground.geometry;
     let zOff = flying;
     for (let z = 0; z < segmentsZ + 1; z++) {
@@ -110,18 +115,13 @@ const updateWater = (ground, flying) => {
     groundGeometry.computeVertexNormals();
 }
 
-// copied from https://stackoverflow.com/questions/18921134/math-random-numbers-between-50-and-80
-function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
 // source: https://jsfiddle.net/prisoner849/hg90shov/
 const moveCar = (name, direction) => {
 
     const car = scene.getObjectByName(name);
     car.position.add(direction.clone().multiplyScalar(1 * (speed / 175)));
     if (car.position.z < -125) {
-        const zOffset = getRandomInt(250, 350);
+        const zOffset = setup.getRandomInt(250, 350);
         car.position.z += zOffset;
     }
 }
@@ -144,6 +144,51 @@ const moveCarInAir = () => {
     }
 }
 
+const handleMoveAmbulance = (event) => {
+    const ambulance = scene.getObjectByName('ambulance');
+    // left arrow key
+    if (event.code === "ArrowLeft" && ambulance.position.x <= 0) {
+        ambulance.position.x += 2.8;
+        whooshSound.play();
+    }
+    // right arrow key
+    if (event.code === "ArrowRight" && ambulance.position.x >= 0) {
+        ambulance.position.x -= 2.8;
+        whooshSound.play();
+    }
+
+    // space logic
+    // adapted from https://discourse.threejs.org/t/three-js-simple-jump/40411
+    if (event.code === "Space" && ambulance.position.y <= 2) {
+        // increase velocity 
+        ambulance.state.velocity_y = 50;
+        // set onGround to false
+        ambulance.state.onGround = false;
+        jumpSound.play();
+    }
+}
+
+const detectCollisions = (car1, car2) => {
+    const bboxCar1 = new Box3().setFromObject(car1);
+    const bboxCar2 = new Box3().setFromObject(car2);
+    // if car not in same lane ignore
+    if (car1.position.x != car2.position.x) {
+        return false;
+    }
+    // collision from front
+    if ((bboxCar1.min.z <= bboxCar2.max.z) && (bboxCar1.min.z >= bboxCar2.min.z) && (bboxCar2.min.y <= bboxCar1.max.y)) {
+        return true;
+    }
+
+    // collision from back
+    if ((bboxCar1.max.z <= bboxCar2.max.z) && (bboxCar1.max.z >= bboxCar2.min.z) && (bboxCar2.min.y <= bboxCar1.max.y)) {
+        return true;
+    }
+
+    // not collision otherwise
+    return false;
+}
+
 
 
 // Render loop
@@ -151,11 +196,11 @@ const onAnimationFrameHandler = (timeStamp) => {
     controls.update();
     const leftGround = scene.getObjectByName('leftGround');
     const rightGround = scene.getObjectByName('rightGround');
-    const water = scene.getObjectByName('floor');
+    const floor = scene.getObjectByName('floor');
     if(!freeze && framestep === 10) {
         updateGround(leftGround, flying);
         updateGround(rightGround, flying);
-        updateWater(water, flying);
+        updateFloor(floor, flying);
         flying += 0.1;
         framestep = 0;
     }
@@ -203,51 +248,6 @@ const windowResizeHandler = () => {
     camera.aspect = innerWidth / innerHeight;
     camera.updateProjectionMatrix();
 };
-
-const handleMoveAmbulance = (event) => {
-    const ambulance = scene.getObjectByName('ambulance');
-    // left arrow key
-    if (event.code === "ArrowLeft" && ambulance.position.x <= 0) {
-        ambulance.position.x += 2.8;
-        whooshSound.play();
-    }
-    // right arrow key
-    if (event.code === "ArrowRight" && ambulance.position.x >= 0) {
-        ambulance.position.x -= 2.8;
-        whooshSound.play();
-    }
-
-    // space logic
-    // adapted from https://discourse.threejs.org/t/three-js-simple-jump/40411
-    if (event.code === "Space" && ambulance.position.y <= 2) {
-        // increase velocity 
-        ambulance.state.velocity_y = 50;
-        // set onGround to false
-        ambulance.state.onGround = false;
-        jumpSound.play();
-    }
-}
-
-const detectCollisions = (car1, car2) => {
-    const bboxCar1 = new Box3().setFromObject(car1);
-    const bboxCar2 = new Box3().setFromObject(car2);
-    // if car not in same lane ignore
-    if (car1.position.x != car2.position.x) {
-        return false;
-    }
-    // collision from front
-    if ((bboxCar1.min.z <= bboxCar2.max.z) && (bboxCar1.min.z >= bboxCar2.min.z) && (bboxCar2.min.y <= bboxCar1.max.y)) {
-        return true;
-    }
-
-    // collision from back
-    if ((bboxCar1.max.z <= bboxCar2.max.z) && (bboxCar1.max.z >= bboxCar2.min.z) && (bboxCar2.min.y <= bboxCar1.max.y)) {
-        return true;
-    }
-
-    // not collision otherwise
-    return false;
-}
 
 
 windowResizeHandler();

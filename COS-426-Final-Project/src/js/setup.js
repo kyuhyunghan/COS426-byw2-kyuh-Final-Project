@@ -3,7 +3,6 @@ import { Audio } from 'three';
 
 
 // jump: https://pixabay.com/sound-effects/cartoon-jump-6462/
-// background: https://pixabay.com/music/main-title-emotional-inspiring-epic-trailer-11258/
 // ambulance: https://pixabay.com/sound-effects/search/ambulance/
 // collision: https://pixabay.com/sound-effects/clank-car-crash-collision-6206/ 
 // whoosh: https://pixabay.com/sound-effects/whoosh-6316/
@@ -17,6 +16,7 @@ const sounds = {
     whoosh: 'https://raw.githubusercontent.com/kyuhyunghan/COS426-byw2-kyuh-Final-Project/main/COS-426-Final-Project/src/components/sounds/whoosh.m4a',
 }
 
+// GUI setup adapted from: https://codepen.io/justgooddesign/pen/ngKJQx
 export function createGUIState() {
     // Init state
     const state = {
@@ -39,6 +39,8 @@ export function createGUIState() {
     return state
 }
 
+// code (and instructions) on how to set up sounds 
+// in three.js was adapted from https://www.youtube.com/watch?v=91sjdKmqxdE
 export function createSounds(listener, audioLoader) {
     const jumpSound = new Audio(listener);
     audioLoader.load(sounds['jump'], function (buffer) {
